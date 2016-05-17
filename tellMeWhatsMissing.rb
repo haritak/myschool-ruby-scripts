@@ -10,7 +10,7 @@ sheet1 = book.worksheet 0
 
 @STATE = 0
 
-@debug = true
+@debug = false
 
 @ignoreMissingTeacher = true
 
@@ -18,12 +18,12 @@ sheet1 = book.worksheet 0
 @checkB = true
 @checkC = false
 
-
 missingStudents= {}
 missingLessons = {}
 missingTmimata = {}
 missingLessons = {}
-sheet1.each do |row|
+sheet1.each_with_index do |row,r|
+  puts r if @debug
   column = 0
   row.each_with_index do |cell,i|
     cell = cell.strip unless (not cell) or (not cell.respond_to?(:strip))
@@ -50,32 +50,40 @@ sheet1.each do |row|
         raise "error4" unless @aTet
         raise "error4" unless @bTet
         raise "error4" unless @grapta
+
+        @missingCounter = 0
         @STATE=1
       elsif cell =~ /Α Τετ.*/
         @aTet = i
+        puts "A tetramino at #{@aTet}" if @debug
       elsif cell =~ /Β Τετ.*/
         @bTet = i
+        puts "B tetramino at #{@bTet}" if @debug
       elsif cell =~ /Γραπ.*/
         @grapta = i
+        puts "grapta at #{@grapta}" if @debug
       end
     elsif @STATE==1
       puts "Δεν βρήκα το Α Τετράμηνο" unless @aTet
       puts "Δεν βρήκα το Β Τετράμηνο" unless @bTet
       puts "Δεν βρήκα τα γραπτα" unless @grapta
-      if i>0 
-        next 
-      end
       if i==0 && (cell =~ // or not cell)
         @STATE=0
         puts "Εδώ τελειώνουν οι μαθητές" if @debug
         @tmima = @mathima = @teacher = nil
+      elsif i>0
+        next #we process the whole row from the first cell (cell 0)
       else
+        if not @teacher and @ignoreMissingTeacher
+          next
+        end
         va = row[@aTet]
         vb = row[@bTet]
         vg = row[@grapta]
-        if (not va and @checkA) ||
-           (not vb and @checkB) ||
-           (not vg and @grapta)
+        if ( !va and @checkA) || ( !vb and @checkB) || ( !vg and @checkC)
+
+          @missingCounter += 1
+
           missingStudent = {}
           missingStudent[:am] = row[1]
           missingStudent[:onoma] = row[2]
@@ -91,19 +99,22 @@ sheet1.each do |row|
           if not missingStudents[fullname] 
             missingStudents[fullname] = []
           end
-          missingStudents[fullname] << missingStudent
+          missingStudents[fullname] << @mathima unless missingStudents[fullname].include? @mathima
 
+          puts "Λείπει ο βαθμός(#{va} #{vb} #{vg}) του #{row[1]}, #{row[2]}, #{row[3]} του #{@tmima} στο #{@mathima}" if @debug
+
+          next if @missingCounter < 5
 
           if not missingTmimata[@tmima] 
             missingTmimata[@tmima] = []
           end
-          missingTmimata[@tmima] << missingStudent
+          missingTmimata[@tmima] << @mathima unless missingTmimata[@tmima].include? @mathima
 
           if not missingLessons[@teacher] 
             missingLessons[@teacher] = []
           end
-          missingLessons[@teacher] << missingStudent
-          puts "Για το πρώτο τρίμηνο Λείπει ο βαθμός του #{row[1]}, #{row[2]}, #{row[3]} του #{@tmima} στο #{@mathima}" if @debug
+          missingLessons[@teacher] << @tmima unless missingLessons[@teacher].include? @tmima
+
         else
           puts "ολα καλα" if @debug
         end
@@ -115,9 +126,12 @@ puts "Parsing finished"
 gets
 
   missingStudents.each do |k, v|
-    if v.size>2
+    if v.size>0
       print k, ":"
       puts v.size
+      v.each do |l|
+        puts " #{l}"
+      end
     end
   end
 
@@ -125,11 +139,13 @@ gets
   gets
 
   missingTmimata.each do |k, v|
-    if v.size>2
-      puts k
-      #v.each do |i|
-        #puts i[:mathima], i[:onoma], i[:epwnymo]
-      #end
+    if v.size>0
+      print k
+      print " "
+      puts v.size
+      v.each do |l|
+        puts " #{l}"
+      end
     end
   end
 
@@ -137,10 +153,13 @@ gets
   gets
 
   missingLessons.each do |k,v|
-    if v.size>2
+    if v.size>0
       print k
       print " " 
       puts v.size
+      v.each do |l|
+        puts " #{l}"
+      end
     end
   end
 
