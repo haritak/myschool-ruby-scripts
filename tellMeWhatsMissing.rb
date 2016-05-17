@@ -10,7 +10,9 @@ sheet1 = book.worksheet 0
 
 @STATE = 0
 
-@debug = false
+@debug = true
+
+@ignoreMissingTeacher = true
 
 @checkA = false
 @checkB = true
@@ -24,6 +26,7 @@ missingLessons = {}
 sheet1.each do |row|
   column = 0
   row.each_with_index do |cell,i|
+    cell = cell.strip unless (not cell) or (not cell.respond_to?(:strip))
     if @STATE == 0
       if cell =~ /Τμήμα/
         print "Βρήκα τμήμα " if @debug
@@ -39,6 +42,14 @@ sheet1.each do |row|
         puts @teacher if @debug
       elsif cell =~ /Α\/Α/
         puts "Εδω ξεκινάνε οι μαθητές" if @debug
+        raise "error1" unless @tmima
+        raise "error2" unless @mathima
+        if not @ignoreMissingTeacher 
+          raise "error3" unless @teacher
+        end
+        raise "error4" unless @aTet
+        raise "error4" unless @bTet
+        raise "error4" unless @grapta
         @STATE=1
       elsif cell =~ /Α Τετ.*/
         @aTet = i
@@ -54,9 +65,10 @@ sheet1.each do |row|
       if i>0 
         next 
       end
-      if i==0 && cell =~ //
+      if i==0 && (cell =~ // or not cell)
         @STATE=0
         puts "Εδώ τελειώνουν οι μαθητές" if @debug
+        @tmima = @mathima = @teacher = nil
       else
         va = row[@aTet]
         vb = row[@bTet]
@@ -98,25 +110,38 @@ sheet1.each do |row|
       end
     end
   end
-
 end
+puts "Parsing finished"
+gets
 
-  #missingStudents.each do |k, v|
-    #puts k
-    #puts v.size
-  #end
+  missingStudents.each do |k, v|
+    if v.size>2
+      print k, ":"
+      puts v.size
+    end
+  end
+
+  puts "hit enter"
+  gets
 
   missingTmimata.each do |k, v|
-    puts k if v.size>2
+    if v.size>2
+      puts k
+      #v.each do |i|
+        #puts i[:mathima], i[:onoma], i[:epwnymo]
+      #end
+    end
   end
 
-  if false
+  puts "hit enter"
+  gets
+
   missingLessons.each do |k,v|
-    print k
-    print " " 
-    print v.size
-    puts k if v.size>1
-  end
+    if v.size>2
+      print k
+      print " " 
+      puts v.size
+    end
   end
 
 
