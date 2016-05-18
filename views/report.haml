@@ -4,19 +4,23 @@
   %body
     %p= "Working on #{params['semester']}"
 
-    - @missingStudents.each do |k,v|
-      %h2=k
-      %ul
-        - v.each do |l|
-          %li= l
-    %hr
+    %h1 Ανα τμήμα
     - @missingTmimata.each do |k,v|
       %h2=k
       %ul
         - v.each do |l|
           %li= l
     %hr
+    %h1 Ανα καθηγητή
     - @missingLessons.each do |k,v|
+      %h2=k
+      %ul
+        - v.each do |l|
+          %li= l
+    %hr
+
+    %h1 Ανα μαθητή
+    - @missingStudents.each do |k,v|
       %h2=k
       %ul
         - v.each do |l|
