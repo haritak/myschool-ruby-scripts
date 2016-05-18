@@ -1,0 +1,13 @@
+%html
+  %body
+    %h1 Go get me your xls.
+    %form(method="post" enctype='multipart/form-data')
+      %select{ :name=>"semester" }
+        %option{:value=>1}= "Α Τετράμηνο"
+        %option{:value=>2}= "B Τετράμηνο"
+        %option{:value=>3}= "γραπτά"
+      %input(type="file" name='mine')
+      %input(type="submit" value="Take these!")
+
+
+
