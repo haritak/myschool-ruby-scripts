@@ -6,7 +6,7 @@ set :bind, '0.0.0.0'
 set :port, 4567
 
 get '/' do
-  redirect_to '/'
+  redirect '/upload'
 end
 
 get '/upload' do
