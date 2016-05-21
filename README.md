@@ -28,3 +28,9 @@ myschool (myschool.sch.gr)
 
 
 
+#### Σημειώσεις
+Για την εγκατάσταση του πακέτου rsruby στο arch linux :
+'pacman -S r
+'gem install rsruby -- --with-R-dir=/usr/lib/R --with-R-include=/usr/include/R
+Επίσης χρειάζεται το R_HOME=/usr/lib/R στο .bashrc
+
