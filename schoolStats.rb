@@ -1,10 +1,20 @@
 require 'rsruby'
 r = RSRuby.instance
-#Call R functions on the r object
-data = r.rnorm(100)
-r.plot(data)
- gets
-#Call with named args
-r.plot({'x' => data, 'y' => data, 'xlab' => 'test', 'ylab' => 'test'})
- gets
+
+r.tiff('output.tiff')
+r.jpeg('output.jpeg')
+n = r.runif(1000)
+n.map! { |e|
+  r.floor(e*10)
+}
+puts n
+t = r.table(n)
+r.barplot(t)
+
+gets
+
+r.dev_off(2)
+r.dev_off(3)
+r.dev_off(4)
+gets
 
