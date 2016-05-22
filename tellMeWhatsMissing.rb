@@ -1,6 +1,8 @@
 require 'spreadsheet'
 require 'sinatra'
 require 'haml'
+require 'chartkick'
+
 
 set :bind, '0.0.0.0'
 set :port, 4567
@@ -39,6 +41,24 @@ post '/upload' do
   @missingStudents= {}
   @missingLessons = {}
   @missingTmimata = {}
+
+  @katanomiVathmwn = {}
+  @katanomiVathmwnGP = {}
+  @katanomiVathmwnEid = {}
+
+  @perTeacherSum = {}
+  @perTeacherCount = {}
+
+  @perStudentSum = {}
+  @perStudentCount = {}
+
+  @perMathimaSum = {}
+  @perMathimaCount = {}
+
+  @girlsSum = 0
+  @girlsCount = 0
+  @boysSum = 0
+  @boysCount = 0
   sheet1.each_with_index do |row,r|
     puts r if @debug
     column = 0
@@ -110,6 +130,8 @@ post '/upload' do
           va = row[@aTet]
           vb = row[@bTet]
           vg = row[@grapta]
+
+          fullname = "#{row[1]} #{row[2]} #{row[3]} #{row[4]} #{row[5]}"
           if ( !va and @checkA) || ( !vb and @checkB) || ( !vg and @checkC)
 
 
@@ -124,7 +146,6 @@ post '/upload' do
             missingStudent[:tetramino] = @tetramino
             missingStudent[:teacher] = @teacher
             
-            fullname = "#{row[1]} #{row[2]} #{row[3]} #{row[4]} #{row[5]}"
             if not @missingStudents[fullname] 
               @missingStudents[fullname] = []
             end
@@ -134,6 +155,58 @@ post '/upload' do
 
           else
             @withDegree += 1
+
+            v = va if @checkA
+            v = vb if @checkB
+            v = vg if @checkC
+
+            if @katanomiVathmwn[v.to_i]
+              @katanomiVathmwn[v.to_i] += 1
+            else
+              @katanomiVathmwn[v.to_i] = 1
+            end
+
+            targetArr = @katanomiVathmwnEid
+            if @mathima =~ /^ΓΠ.*/
+              targetArr = @katanomiVathmwnGP
+            end
+            if targetArr[v.to_i]
+              targetArr[v.to_i] += 1
+            else
+              targetArr[v.to_i] = 1
+            end
+
+            if not @perTeacherCount[@teacher] 
+              @perTeacherCount[@teacher] = 1
+              @perTeacherSum[@teacher] = v.to_i
+            else
+              @perTeacherCount[@teacher] += 1
+              @perTeacherSum[@teacher] += v.to_i
+            end
+
+            if not @perMathimaCount[@mathima] 
+              @perMathimaCount[@mathima] = 1
+              @perMathimaSum[@mathima] = v.to_i
+            else
+              @perMathimaCount[@mathima] += 1
+              @perMathimaSum[@mathima] += v.to_i
+            end
+
+            if row[3] =~ /.*Σ$/
+              @boysCount += 1
+              @boysSum += v.to_i
+            else
+              @girlsCount += 1
+              @girlsSum += v.to_i
+            end
+
+            if not @perStudentCount[fullname]
+              @perStudentCount[fullname] = 1
+              @perStudentSum[fullname] = v.to_i
+            else
+              @perStudentCount[fullname] += 1
+              @perStudentSum[fullname] += v.to_i
+            end
             puts "ολα καλα" if @debug
           end
         end
@@ -181,6 +254,53 @@ post '/upload' do
       end
     end
   end
+
+  arrays = [@katanomiVathmwn, @katanomiVathmwnGP, @katanomiVathmwnEid]
+
+  arrays.each do |arr|
+    20.times do |k|
+      arr[k] = 0 unless arr[k]
+      v = arr[k]
+      print k,":(",v,")"
+      puts
+    end
+  end
+
+  @perTeacherAvg = {}
+  @perTeacherCount.each do |k,v|
+    @perTeacherAvg[k] = @perTeacherSum[k]/ v
+    print k, ":", @perTeacherAvg[k]
+    puts
+  end
+
+  @perMathimaAvg = {}
+  @perMathimaCount.each do |k,v|
+    @perMathimaAvg[k] = @perMathimaSum[k] / v
+  end
+
+  sorted = @perMathimaAvg.sort_by {|k,v| v }
+  sorted.each do |k,v|
+    print k, ":", v
+    puts
+  end
+
+  @gradesPerSex = {}
+  @gradesPerSex["Boys"] = @boysSum/@boysCount
+  @gradesPerSex["Girls"] = @girlsSum/@girlsCount
+
+  @gradesPerSex.each do |k,v|
+    print k,v
+  end
+
+  @perStudentAvg = {}
+  @perStudentCount.each do |k,v|
+    @perStudentAvg[k] = @perStudentSum[k]/v
+  end
+
+  @sortedPerStudentAvg = @perStudentAvg.sort_by{ |k,v| v }
+
+  @top10Students = @sortedPerStudentAvg.last(10).to_h
+
 
   haml :report
 

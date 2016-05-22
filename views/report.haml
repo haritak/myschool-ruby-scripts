@@ -1,17 +1,21 @@
+%script(src="https://www.google.com/jsapi")
+%script(src="/chartkick.js")
 %html
   %head 
     %title Who's gone get shot
   %body
     %p= "Working on #{params['semester']}"
 
-    %h1 Ανα τμήμα
+    %h1 Ελλείψεις βαθμών
+
+    %h2 Ανα τμήμα
     - @missingTmimata.each do |k,v|
       %h2=k
       %ul
         - v.each do |l|
           %li= l
     %hr
-    %h1 Ανα καθηγητή
+    %h2 Ανα καθηγητή
     - @missingLessons.each do |k,v|
       %h2=k
       %ul
@@ -19,13 +23,38 @@
           %li= l
     %hr
 
-    %h1 Ανα μαθητή
+    %h2 Ανα μαθητή
     - @missingStudents.each do |k,v|
       %h2=k
       %ul
         - v.each do |l|
           %li= l
     %hr
+
+    %h1 Στατιστικά
+
+    %h2 Κατανομή βαθμών
+    = column_chart( @katanomiVathmwn )
+
+    %h2 Κατανομή βαθμών, σε μαθήματα Γενικής Παιδείας
+    = column_chart( @katanomiVathmwnGP )
+
+    %h2 Κατανομή βαθμών, σε μαθήματα Ειδικοτήτων
+    = column_chart( @katanomiVathmwnEid )
+
+    %h2 Μέσος όρος αγοριών - κοριτσιών
+    = column_chart( @gradesPerSex )
+
+    %h2 Μέσος όρος βαθμών ανα μάθημα
+    = column_chart ( @perMathimaAvg )
+
+    %h2 Μέσος όρος βαθμών ανα καθηγητή/τρια
+    = column_chart ( @perTeacherAvg )
+
+    %h2 Δέκα πρώτοι μαθητές/τριες
+    = column_chart ( @top10Students )
+
+
 
 
 
