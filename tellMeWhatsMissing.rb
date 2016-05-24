@@ -359,7 +359,7 @@ post '/upload' do
   @top10Students = @sortedPerStudentAvg.last(10).reverse.to_h
 
   @taksi = 'a' if @taksi == 'Α'
-  @taksi = 'b' if @taksi == 'B'
+  @taksi = 'b' if @taksi == 'Β'
   @taksi = 'c' if @taksi == 'Γ'
 
   @storage={}
