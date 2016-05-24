@@ -25,7 +25,7 @@ get '/report/:class/:semester' do
   @semester = params[:semester]
 
   @taksi = 'a' if @taksi == 'Α'
-  @taksi = 'b' if @taksi == 'B'
+  @taksi = 'b' if @taksi == 'Β'
   @taksi = 'c' if @taksi == 'Γ'
 
   filename = "#{@taksi}.#{@semester}.yaml"
