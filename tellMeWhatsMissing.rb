@@ -2,6 +2,7 @@ require 'spreadsheet'
 require 'sinatra'
 require 'haml'
 require 'chartkick'
+require 'yaml'
 
 
 set :bind, '0.0.0.0'
@@ -215,7 +216,6 @@ post '/upload' do
   end
   puts "Parsing finished" if @debug
   gets if @debug
-
 
   @missingStudents.each do |k, v|
     if v.size>0

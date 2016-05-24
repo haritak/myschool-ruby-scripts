@@ -36,11 +36,9 @@
     %h2 Κατανομή βαθμών
     = column_chart( @katanomiVathmwn )
 
-    %h2 Κατανομή βαθμών, σε μαθήματα Γενικής Παιδείας
-    = column_chart( @katanomiVathmwnGP )
-
-    %h2 Κατανομή βαθμών, σε μαθήματα Ειδικοτήτων
-    = column_chart( @katanomiVathmwnEid )
+    %h2 Κατανομή βαθμών, Σύγκριση Γενικής Παιδείς - Ειδικοτήτων
+    = column_chart( [{name: "Γενικής Παιδείας", data: @katanomiVathmwnGP},
+      {name: "Ειδικοτήτων", data: @katanomiVathmwnEid} )
 
     %h2 Μέσος όρος αγοριών - κοριτσιών
     = column_chart( @gradesPerSex )
