@@ -4,11 +4,16 @@
   %head 
     %title Who's gone get shot
   %body
-    %h1= "#{@taksi}, Τετράμηνο #{@semester}"
+    %h1= "#{@taksi}, Περίοδος #{@semester}"
+    %small Α Τετράμηνο = Περίοδος 1, Β Τετράμηνο = Περίοδος 2, Γραπτά = Περίοδος 3
 
     %p= "Τελευταία ενημέρωση #{@modtime}"
+    %a(href="/upload") Κάντε μία ενημέρωση τώρα
 
     %h1 Ελλείψεις βαθμών
+    %small
+      %p Σημείωση:
+      %p Μερικοί βαθμοί μπορεί να λείπουν λόγω ελλειπών διαλέξων, μη επαρκούς προσωπικού ή άλλων αιτιών. Επίσης, η Φυσική Αγωγή Β τετραμήνου λείπει λόγω προβλήματος στις αναφορές του myschool.
 
     %h2 Ανα τμήμα
     - @missingTmimata.each do |k,v|
@@ -38,9 +43,14 @@
     %h2 Κατανομή βαθμών
     = column_chart( @katanomiVathmwn )
 
-    %h2 Κατανομή βαθμών, Σύγκριση Γενικής Παιδείς - Ειδικοτήτων
+    %h2 Κατανομή βαθμών: Σύγκριση Γενικής Παιδείας και Ειδικοτήτων
     = column_chart( [{name: "Γενικής Παιδείας", data: @katanomiVathmwnGP},
       {name: "Ειδικοτήτων", data: @katanomiVathmwnEid}] )
+
+    %h2 Δέκα πρώτοι μαθητές/τριες
+    = column_chart ( @top10Students )
+    - @top10Students.each do |k,v|
+      %li= k
 
     %h2 Μέσος όρος αγοριών - κοριτσιών
     = column_chart( @gradesPerSex )
@@ -51,8 +61,8 @@
     %h2 Μέσος όρος βαθμών ανα καθηγητή/τρια
     = column_chart ( @perTeacherAvg )
 
-    %h2 Δέκα πρώτοι μαθητές/τριες
-    = column_chart ( @top10Students )
+    %h2 Τυπική απόκλιση βαθμών ανα καθηγητή/τρια
+    = column_chart ( @perTeacherStdDev )
 
 
 

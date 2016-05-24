@@ -9,11 +9,15 @@ set :bind, '0.0.0.0'
 set :port, 4567
 
 get '/' do
-  redirect '/upload'
+  redirect '/report'
 end
 
 get '/upload' do
   haml :upload
+end
+
+get '/report' do
+  haml :report_index
 end
 
 get '/report/:class/:semester' do
@@ -26,25 +30,30 @@ get '/report/:class/:semester' do
 
   filename = "#{@taksi}.#{@semester}.yaml"
 
-  @modtime = File.mtime( filename )
-  @storage = YAML::load_file filename
+  begin
+    @modtime = File.mtime( filename )
+    @storage = YAML::load_file filename
 
-  @taksi =@storage[:taksi]
-  @semester =@storage[:semester]
-  @missingStudents =@storage[:missingStudents]
-  @missingTmimata =@storage[:missingTmimata]
-  @missingLessons =@storage[:missingLessons]
-  @katanomiVathmwn =@storage[:katanomiVathmwn]
-  @katanomiVathmwnEid =@storage[:katanomiVathmwnEid]
-  @katanomiVathmwnGP =@storage[:katanomiVathmwnGP]
-  @perTeacherAvg =@storage[:perTeacherAvg]
-  @perMathimaAvg =@storage[:perMathimaAvg]
-  @gradesPerSex =@storage[:gradesPerSex]
-  @perStudentAvg =@storage[:perStudentAvg]
-  @sortedPerStudentAvg =@storage[:sortedPerStudentAvg]
-  @top10Students =@storage[:top10Students]
+    @taksi =@storage[:taksi]
+    @semester =@storage[:semester]
+    @missingStudents =@storage[:missingStudents]
+    @missingTmimata =@storage[:missingTmimata]
+    @missingLessons =@storage[:missingLessons]
+    @katanomiVathmwn =@storage[:katanomiVathmwn]
+    @katanomiVathmwnEid =@storage[:katanomiVathmwnEid]
+    @katanomiVathmwnGP =@storage[:katanomiVathmwnGP]
+    @perTeacherAvg =@storage[:perTeacherAvg]
+    @perTeacherStdDev =@storage[:perTeacherStdDev]
+    @perMathimaAvg =@storage[:perMathimaAvg]
+    @gradesPerSex =@storage[:gradesPerSex]
+    @perStudentAvg =@storage[:perStudentAvg]
+    @sortedPerStudentAvg =@storage[:sortedPerStudentAvg]
+    @top10Students =@storage[:top10Students]
 
-  haml :report
+    haml :report
+  rescue => e
+    "Δεν υπάρχουν δεδομένα"
+  end
 end
 
 
@@ -82,6 +91,7 @@ post '/upload' do
 
   @perTeacherSum = {}
   @perTeacherCount = {}
+  @perTeacherMarks = {}
 
   @perStudentSum = {}
   @perStudentCount = {}
@@ -215,9 +225,11 @@ post '/upload' do
             if not @perTeacherCount[@teacher] 
               @perTeacherCount[@teacher] = 1
               @perTeacherSum[@teacher] = v.to_i
+              @perTeacherMarks[@teacher] = [v.to_i]
             else
               @perTeacherCount[@teacher] += 1
               @perTeacherSum[@teacher] += v.to_i
+              @perTeacherMarks[@teacher] << v.to_i
             end
 
             if not @perMathimaCount[@mathima] 
@@ -308,6 +320,16 @@ post '/upload' do
     puts
   end
 
+  @perTeacherStdDev = {}
+  @perTeacherMarks.each do |k, v|
+    @perTeacherStdDev[k] = 0
+    v.each do |mark|
+      @perTeacherStdDev[k] += (mark - @perTeacherAvg[k])**2
+    end
+    @perTeacherStdDev[k] = Math.sqrt( @perTeacherStdDev[k] ) / @perTeacherCount[k]
+  end
+
+
   @perMathimaAvg = {}
   @perMathimaCount.each do |k,v|
     @perMathimaAvg[k] = @perMathimaSum[k] / v
@@ -334,7 +356,7 @@ post '/upload' do
 
   @sortedPerStudentAvg = @perStudentAvg.sort_by{ |k,v| v }
 
-  @top10Students = @sortedPerStudentAvg.last(10).to_h
+  @top10Students = @sortedPerStudentAvg.last(10).reverse.to_h
 
   @taksi = 'a' if @taksi == 'Α'
   @taksi = 'b' if @taksi == 'B'
@@ -350,6 +372,7 @@ post '/upload' do
   @storage[:katanomiVathmwnEid] = @katanomiVathmwnEid
   @storage[:katanomiVathmwnGP] = @katanomiVathmwnGP
   @storage[:perTeacherAvg] = @perTeacherAvg
+  @storage[:perTeacherStdDev] = @perTeacherStdDev
   @storage[:perMathimaAvg] = @perMathimaAvg
   @storage[:gradesPerSex] = @gradesPerSex
   @storage[:perStudentAvg] = @perStudentAvg
