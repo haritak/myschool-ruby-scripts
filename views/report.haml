@@ -4,7 +4,9 @@
   %head 
     %title Who's gone get shot
   %body
-    %p= "Working on #{params['semester']}"
+    %h1= "#{@taksi}, Τετράμηνο #{@semester}"
+
+    %p= "Τελευταία ενημέρωση #{@modtime}"
 
     %h1 Ελλείψεις βαθμών
 
@@ -17,7 +19,7 @@
     %hr
     %h2 Ανα καθηγητή
     - @missingLessons.each do |k,v|
-      %h2=k
+      %h3=k
       %ul
         - v.each do |l|
           %li= l
@@ -25,7 +27,7 @@
 
     %h2 Ανα μαθητή
     - @missingStudents.each do |k,v|
-      %h2=k
+      %h3=k
       %ul
         - v.each do |l|
           %li= l
@@ -38,7 +40,7 @@
 
     %h2 Κατανομή βαθμών, Σύγκριση Γενικής Παιδείς - Ειδικοτήτων
     = column_chart( [{name: "Γενικής Παιδείας", data: @katanomiVathmwnGP},
-      {name: "Ειδικοτήτων", data: @katanomiVathmwnEid} )
+      {name: "Ειδικοτήτων", data: @katanomiVathmwnEid}] )
 
     %h2 Μέσος όρος αγοριών - κοριτσιών
     = column_chart( @gradesPerSex )

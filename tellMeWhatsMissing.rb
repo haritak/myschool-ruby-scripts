@@ -16,6 +16,38 @@ get '/upload' do
   haml :upload
 end
 
+get '/report/:class/:semester' do
+  @taksi = params[:class]
+  @semester = params[:semester]
+
+  @taksi = 'a' if @taksi == 'Α'
+  @taksi = 'b' if @taksi == 'B'
+  @taksi = 'c' if @taksi == 'Γ'
+
+  filename = "#{@taksi}.#{@semester}.yaml"
+
+  @modtime = File.mtime( filename )
+  @storage = YAML::load_file filename
+
+  @taksi =@storage[:taksi]
+  @semester =@storage[:semester]
+  @missingStudents =@storage[:missingStudents]
+  @missingTmimata =@storage[:missingTmimata]
+  @missingLessons =@storage[:missingLessons]
+  @katanomiVathmwn =@storage[:katanomiVathmwn]
+  @katanomiVathmwnEid =@storage[:katanomiVathmwnEid]
+  @katanomiVathmwnGP =@storage[:katanomiVathmwnGP]
+  @perTeacherAvg =@storage[:perTeacherAvg]
+  @perMathimaAvg =@storage[:perMathimaAvg]
+  @gradesPerSex =@storage[:gradesPerSex]
+  @perStudentAvg =@storage[:perStudentAvg]
+  @sortedPerStudentAvg =@storage[:sortedPerStudentAvg]
+  @top10Students =@storage[:top10Students]
+
+  haml :report
+end
+
+
 post '/upload' do
   File.open('uploads/' + params['mine'][:filename], "w") do |f|
     f.write(params['mine'][:tempfile].read)
@@ -35,6 +67,7 @@ post '/upload' do
 
   p params
   sem = params['semester']
+  @semester = sem
   @checkA = (sem=="1")
   @checkB = (sem=="2")
   @checkC = (sem=="3")
@@ -70,6 +103,8 @@ post '/upload' do
           print "Βρήκα τμήμα " if @debug
           @tmima=row[8]
           puts @tmima if @debug
+        elsif cell =~ /Τάξη/
+          @taksi = row[8]
         elsif cell =~ /Μάθημα/
           print "Βρήκα μάθημα " if @debug
           @mathima=row[5]
@@ -301,8 +336,35 @@ post '/upload' do
 
   @top10Students = @sortedPerStudentAvg.last(10).to_h
 
+  @taksi = 'a' if @taksi == 'Α'
+  @taksi = 'b' if @taksi == 'B'
+  @taksi = 'c' if @taksi == 'Γ'
 
-  haml :report
+  @storage={}
+  @storage[:taksi] = @taksi
+  @storage[:semester] = @semester
+  @storage[:missingStudents] = @missingStudents
+  @storage[:missingTmimata] = @missingTmimata
+  @storage[:missingLessons] = @missingLessons
+  @storage[:katanomiVathmwn] = @katanomiVathmwn
+  @storage[:katanomiVathmwnEid] = @katanomiVathmwnEid
+  @storage[:katanomiVathmwnGP] = @katanomiVathmwnGP
+  @storage[:perTeacherAvg] = @perTeacherAvg
+  @storage[:perMathimaAvg] = @perMathimaAvg
+  @storage[:gradesPerSex] = @gradesPerSex
+  @storage[:perStudentAvg] = @perStudentAvg
+  @storage[:sortedPerStudentAvg] = @sortedPerStudentAvg
+  @storage[:top10Students] = @top10Students
+
+
+  filename = "#{@taksi}.#{@semester}.yaml"
+  File.open(filename, "w") do |f|
+    f.write @storage.to_yaml
+  end
+
+  #haml :report
+  puts "/report/#{@taksi}/#{@semester}"
+  redirect "/report/#{@taksi}/#{@semester}"
 
 end#post
 
