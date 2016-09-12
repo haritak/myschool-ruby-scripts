@@ -1,0 +1,21 @@
+#ych: from prawn-label gem directory
+#
+# prawns' basic unit is PostScript-Point
+# 72 points per inch
+#
+# 28.346 points per cm
+#
+
+# Avery Avery18036 family: Mailing labels, 63.5 x 38.1 mm, 21 per sheet
+Avery18036:
+    paper_size: A4
+    top_margin: 43.9
+    bottom_margin: 43.9
+    left_margin: 19.843
+    right_margin: 19.843
+    columns: 3
+    rows: 9
+    #column_gutter: 8.504
+    column_gutter: 0
+    row_gutter: 0
+
