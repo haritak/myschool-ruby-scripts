@@ -18,9 +18,9 @@ Prawn::Labels.generate("names.pdf", names, :type => "Avery18036") do |pdf, name|
   svg = qrcode.as_svg
   IO.write("#{id}", svg.to_s)
 
-  pdf.svg IO.read("#{id}"), at: [0,60], width: 50, height: 50
-  pdf.svg IO.read("#{id}"), at: [55,60], width: 50, height: 50
-  pdf.svg IO.read("#{id}"), at: [110,60], width: 50, height: 50
+  pdf.svg IO.read("#{name}"), at: [0,60], width: 50, height: 50
+  pdf.svg IO.read("#{name}"), at: [55,60], width: 50, height: 50
+  pdf.svg IO.read("#{name}"), at: [110,60], width: 50, height: 50
   pdf.draw_text name, at: [1,1], size: 7
   pdf.draw_text name, at: [55,1], size: 7
   pdf.draw_text name, at: [110,1], size: 7
