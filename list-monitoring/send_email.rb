@@ -11,20 +11,17 @@ Mail.defaults do
                           :user_name  => USERNAME,
                           :password   => PASSWORD,
                           :enable_ssl => true
+  delivery_method(:smtp, address: "smtp.gmail.com", 
+    port: 587, 
+    user_name: USERNAME,
+    password: PASSWORD,
+    authentication: 'plain',
+    enable_starttls_auto: true)
 end
 
-Mail.all.each do |m|
-  puts m.message_id
-  puts m.to
-  puts m.from
-  puts m.cc
-  if m.multipart?
-    puts "multipart message"
-    puts "each part is"
-    puts m.parts.length
-      m.parts.each do |m|
-        puts m.content_type_parameters
-    end
-  end
-
+Mail.deliver do
+  to 'charitakis.ioannis@gmail.com'
+  from 'artemis1epalmoiron@gmail.com'
+  subject 'This is Artemis'
+  body 'this is testing'
 end
