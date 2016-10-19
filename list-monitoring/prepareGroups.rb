@@ -1,6 +1,7 @@
 #
 #https://github.com/mikel/mail
 #
+require 'roo-xls'
 
 require 'mail'
 load "/home/haritak/my_work/school/myschool-ruby-scripts/list-monitoring/forbiden"
@@ -47,14 +48,24 @@ Mail.all.each do |m|
     m.attachments.each do |a|
       filename = a.filename
       if filename =~ /EXCEL\.xls/
-        puts "ACTION"
         xlsFound = true
+        puts "Schedule EXCEL.xls found. Saving"
+        File.open("GroupFixer/EXCEL.xls", "w+b", 0644) {|f| f.write a.body.decoded}
+
+        xls = Roo::Spreadsheet.open("GroupFixer/EXCEL.xls")
+        sheet = xls.sheet(0)
+        sheet.each_with_index do |r,i|
+          puts i
+          puts r[0]
+        end
+        %x{ cd GroupFixer && php groupfixer.php > prepared.xls }
       else
         puts "ignoring attachment"
       end
     end
     if titleHintsSchedule and !xlsFound
       puts "Missing EXCEL.xls from schedule!"
+      next
       Mail.deliver do
         charset = "UTF-8"
         content_transfer_encoding="8bit"
