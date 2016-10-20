@@ -1,6 +1,8 @@
 require 'roo-xls'
 require 'fileutils'
 require 'sqlite3'
+#https://github.com/zdavatz/spreadsheet/blob/master/GUIDE.md
+require 'spreadsheet'
 
 FileUtils.touch('whosin.db')
 
@@ -38,7 +40,11 @@ if not initializeDb
 end
 
 xls = Roo::Spreadsheet.open("GroupFixer/EXCEL.xls")
+new_xls = Spreadsheet::Workbook.new
+new_sheet = new_xls.create_worksheet
+
 sheet = xls.sheet(0)
+new_i=0
 sheet.each_with_index do |r,i|
   next if not r[0] or r[0].chomp == "" 
   puts "--#{r[0]}--"
@@ -51,6 +57,13 @@ sheet.each_with_index do |r,i|
       puts "ignoring..."
     end
   end
+
+  if teachers.include?(r[0])
+    puts "Teacher #{r[0]} included in groups"
+    new_sheet.update_row new_i, r
+    new_i+=1
+  end
 end
+new_xls.write("GroupFixer/PROCESSED.xls")
 
 db.close
