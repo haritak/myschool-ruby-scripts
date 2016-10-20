@@ -11,7 +11,7 @@ db.execute "CREATE TABLE IF NOT EXISTS teachers(timetables_name TEXT PRIMARY KEY
 stm = db.prepare "SELECT * FROM teachers"
 rs = stm.execute
 
-initializeDb = true
+initializeDb = false
 allTeachers=[]
 
 if rs.eof?
@@ -32,14 +32,16 @@ if not initializeDb
   if rs.eof?
     puts "No need to do anything. Noone is using the groups"
   else
-    teachers = rs.map {|r| r[0]}
+    teachers= rs.map {|r| r[0].tr('/','_')} #replace / because it causes illegal URLs
   end
-  p teachers
 
   stm.close
 end
 
+p teachers
+
 xls = Roo::Spreadsheet.open("GroupFixer/EXCEL.xls")
+Spreadsheet.client_encoding = 'UTF-8'
 new_xls = Spreadsheet::Workbook.new
 new_sheet = new_xls.create_worksheet
 
@@ -47,6 +49,7 @@ sheet = xls.sheet(0)
 new_i=0
 sheet.each_with_index do |r,i|
   next if not r[0] or r[0].chomp == "" 
+  r[0].tr!('/','_') #avoid bad urls
   puts "--#{r[0]}--"
 
   if initializeDb or not allTeachers.include?(r[0])
@@ -60,7 +63,7 @@ sheet.each_with_index do |r,i|
 
   if teachers.include?(r[0])
     puts "Teacher #{r[0]} included in groups"
-    new_sheet.update_row new_i, r
+    new_sheet.insert_row new_i, r
     new_i+=1
   end
 end

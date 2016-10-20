@@ -11,8 +11,8 @@ const START_HOUR_GAP = 1;//gap when day hours start
 //$psnger = new Teacher(); // create passenger object to store passenger data
 $dromo_array = array();
 
-$_FILES["file"]["name"] = "EXCEL.xls";
-$_FILES["file"]["tmp_name"] = "EXCEL.xls";
+$_FILES["file"]["name"] = "PROCESSED.xls";
+$_FILES["file"]["tmp_name"] = "PROCESSED.xls";
 if (strlen($_FILES["file"]["name"])>4){
 	if ($_FILES["file"]["error"] > 0)
 	  {

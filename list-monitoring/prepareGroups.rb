@@ -52,13 +52,35 @@ Mail.all.each do |m|
         puts "Schedule EXCEL.xls found. Saving"
         File.open("GroupFixer/EXCEL.xls", "w+b", 0644) {|f| f.write a.body.decoded}
 
-        xls = Roo::Spreadsheet.open("GroupFixer/EXCEL.xls")
-        sheet = xls.sheet(0)
-        sheet.each_with_index do |r,i|
-          puts i
-          puts r[0]
+        if File.exist?('GroupFixer/READY.xls') 
+          FileUtils.rm('GroupFixer/READY.xls')
         end
-        %x{ cd GroupFixer && php groupfixer.php > prepared.xls }
+
+        %x{ ruby filterTeachers.rb }
+        %x{ cd GroupFixer && php groupfixer.php > READY.xls }
+        if File.exist?('GroupFixer/READY.xls')
+          Mail.deliver do
+            charset = "UTF-8"
+            content_transfer_encoding="8bit"
+            from 'Αρτέμης Σώρρας <artemis1epalmoiron@gmail.com>'
+            to 'epalmoiron.yp@gmail.com'
+            cc 'charitakis.ioannis@gmail.com'
+            subject 'Ετοιμο αρχείο READY.xls για τα groupakia!'
+            add_file 'GroupFixer/READY.xls'
+            text_part do
+              content_type "text/plain; charset=utf-8"
+              body <<-EOF
+Γειά σας,
+
+Είμαι στην ευχάριστη θέσης να σας στείλω τα groupakia.
+Χρειάζονται λίγη δουλίτσα ακόμα.
+
+Με τιμή,
+Αρτέμης Σώρρας"
+              EOF
+            end
+          end
+        end
       else
         puts "ignoring attachment"
       end

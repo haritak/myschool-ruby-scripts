@@ -35,7 +35,9 @@ get '/' do
 end
 
 get '/:teacher_name' do
-  params[:teacher_name]
-  allTeachers[:teacher_name] = allTeachers[:teacher_name] 
+  t = params[:teacher_name]
+  allTeachers[t] = (allTeachers[t]+1)%2
+  db.execute("UPDATE teachers SET using_groups=#{allTeachers[t]} where timetables_name='#{t}'")
+  redirect '/'
 end
 
