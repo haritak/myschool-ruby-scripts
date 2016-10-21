@@ -4,7 +4,7 @@
 require 'roo-xls'
 
 require 'mail'
-load "/home/haritak/my_work/school/myschool-ruby-scripts/list-monitoring/forbiden"
+load "forbiden"
 
 programmers = ["charitakis.ioannis@gmail.com",
                "tkodellas@gmail.com",
@@ -63,8 +63,7 @@ Mail.all.each do |m|
             charset = "UTF-8"
             content_transfer_encoding="8bit"
             from 'Αρτέμης Σώρρας <artemis1epalmoiron@gmail.com>'
-            to 'epalmoiron.yp@gmail.com'
-            cc 'charitakis.ioannis@gmail.com'
+            to '1epal-moiron-dev@googlegroups.com'
             subject 'Ετοιμο αρχείο READY.xls για τα groupakia!'
             add_file 'GroupFixer/READY.xls'
             text_part do
@@ -75,8 +74,15 @@ Mail.all.each do |m|
 Είμαι στην ευχάριστη θέσης να σας στείλω τα groupakia.
 Χρειάζονται λίγη δουλίτσα ακόμα.
 
+Μπορείτε να ρυθμίσετε ποιοι θα είναι στα group εδώ:
+http://srv-1tee-moiron.ira.sch.gr:4567/ αλλά
+μετά θα πρέπει να μου στείλετε (σε εμένα, όχι σε λίστα) άλλο ένα email
+με συννημμένο το αρχείο EXCEL.xls 
+έτσι ώστε να ξαναπιάσω δουλειά.
+
+
 Με τιμή,
-Αρτέμης Σώρρας"
+Αρτέμης Μάτσας
               EOF
             end
           end
@@ -92,7 +98,7 @@ Mail.all.each do |m|
         charset = "UTF-8"
         content_transfer_encoding="8bit"
         from 'Αρτέμης Σώρρας <artemis1epalmoiron@gmail.com>'
-        to 'epalmoiron.yp@gmail.com'
+        to 'tkodellas@gmail.com'
         cc 'charitakis.ioannis@gmail.com'
         subject 'Λείπει το αρχείο EXCEL.xls'
         text_part do
@@ -114,7 +120,7 @@ Mail.all.each do |m|
 δουλέψω και εγώ.
 
 Με τιμή,
-Αρτέμης Σώρρας "
+Αρτέμης Μάτσας
           EOF
         end
       end
@@ -122,4 +128,4 @@ Mail.all.each do |m|
   end
 end
 
-#Mail.find_and_delete
+Mail.find_and_delete

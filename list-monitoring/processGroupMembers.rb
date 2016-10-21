@@ -1,6 +1,8 @@
 require 'sinatra'
 require 'sqlite3'
 
+set :bind, '0.0.0.0'
+
 FileUtils.touch('whosin.db')
 
 db = SQLite3::Database.open "whosin.db"
