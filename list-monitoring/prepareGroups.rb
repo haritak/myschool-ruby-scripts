@@ -50,6 +50,11 @@ Mail.all.each do |m|
       if filename =~ /EXCEL\.xls/
         xlsFound = true
         puts "Schedule EXCEL.xls found. Saving"
+
+        if File.exist?('GroupFixer/EXCEL.xls') 
+          FileUtils.rm('GroupFixer/EXCEL.xls')
+        end
+
         File.open("GroupFixer/EXCEL.xls", "w+b", 0644) {|f| f.write a.body.decoded}
 
         if File.exist?('GroupFixer/READY.xls') 
