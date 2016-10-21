@@ -69,7 +69,8 @@ Mail.all.each do |m|
             content_transfer_encoding="8bit"
             from 'Αρτέμης Σώρρας <artemis1epalmoiron@gmail.com>'
             to '1epal-moiron-dev@googlegroups.com'
-            subject 'Ετοιμο αρχείο READY.xls για τα groupakia!'
+            time = time.new
+            subject "Ετοιμο αρχείο READY.xls για αυτά που πήρα στις #{time.day}-#{time.month}"
             add_file 'GroupFixer/READY.xls'
             text_part do
               content_type "text/plain; charset=utf-8"
