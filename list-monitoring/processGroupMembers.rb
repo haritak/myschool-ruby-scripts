@@ -6,21 +6,27 @@ set :bind, '0.0.0.0'
 FileUtils.touch('whosin.db')
 
 db = SQLite3::Database.open "whosin.db"
-
 db.execute "CREATE TABLE IF NOT EXISTS teachers(timetables_name TEXT PRIMARY KEY, using_groups TINYINT)"
-stm = db.prepare "SELECT * FROM teachers"
-rs = stm.execute
 
-tmp = rs.map{|r| {r[0]=>r[1]} }
+allTeachers={}
 
-allTeachers = {}
-tmp.each do |e|
-  allTeachers.update(e)
+def refreshAllTeachers(db, allTeachers)
+  stm = db.prepare "SELECT * FROM teachers"
+  rs = stm.execute
+
+  tmp = rs.map{|r| {r[0]=>r[1]} }
+
+  tmp.each do |e|
+    allTeachers.update(e)
+  end
 end
 
+refreshAllTeachers(db, allTeachers)
 puts allTeachers
 
 get '/' do
+  refreshAllTeachers(db, allTeachers)
+  puts allTeachers
   toReturn="<ul>"
   allTeachers.each do |t, i|
     toReturn += "<li><a href='/#{t}'>"
