@@ -67,9 +67,9 @@ Mail.all.each do |m|
           Mail.deliver do
             charset = "UTF-8"
             content_transfer_encoding="8bit"
-            from 'Αρτέμης Σώρρας <artemis1epalmoiron@gmail.com>'
+            from 'Αρτέμης Μάτσας <artemis1epalmoiron@gmail.com>'
             to '1epal-moiron-dev@googlegroups.com'
-            time = time.new
+            time = Time.new
             subject "Ετοιμο αρχείο READY.xls για αυτά που πήρα στις #{time.day}-#{time.month}"
             add_file 'GroupFixer/READY.xls'
             text_part do
@@ -103,7 +103,7 @@ http://srv-1tee-moiron.ira.sch.gr:4567/ αλλά
       Mail.deliver do
         charset = "UTF-8"
         content_transfer_encoding="8bit"
-        from 'Αρτέμης Σώρρας <artemis1epalmoiron@gmail.com>'
+        from 'Αρτέμης Μάτσας <artemis1epalmoiron@gmail.com>'
         to 'tkodellas@gmail.com'
         cc 'charitakis.ioannis@gmail.com'
         subject 'Λείπει το αρχείο EXCEL.xls'
