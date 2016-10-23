@@ -2,14 +2,17 @@
 //error_reporting(E_ALL);
 //ini_set('display_errors', 1);
 
-require_once('../PhpExcelClasses/PHPExcel.php');
-require_once('../PhpExcelClasses/PHPExcel/IOFactory.php');
+require_once('PHPExcel.php');
+require_once('PHPExcel/IOFactory.php');
 require_once('groupfixer_classes.php');
 const HOURS_PER_DAY = 7; 
 const DAYS_PER_WEEK = 5;
 const START_HOUR_GAP = 1;//gap when day hours start
 //$psnger = new Teacher(); // create passenger object to store passenger data
 $dromo_array = array();
+
+$_FILES["file"]["name"] = "PROCESSED.xls";
+$_FILES["file"]["tmp_name"] = "PROCESSED.xls";
 if (strlen($_FILES["file"]["name"])>4){
 	if ($_FILES["file"]["error"] > 0)
 	  {
@@ -26,11 +29,12 @@ if (strlen($_FILES["file"]["name"])>4){
 
 	//include 'PHPExcel/IOFactory.php';
 	//$fileType = 'Excel5';
-	//$fileName = $_FILES["file"]["name"];
-	$fileName = $_FILES['file']['name'];
+
+	$fileName = $_FILES["file"]["name"];
 	if (substr($fileName, -3)=="xls"){
-		// Read the file
-		$objPHPExcel = PHPExcel_IOFactory::load($_FILES["file"]["tmp_name"]); //load uploaded tmp file 
+		// Read the file 
+		$objPHPExcel = PHPExcel_IOFactory::load($_FILES["file"]["tmp_name"]);
+		//$objPHPExcel = PHPExcel_IOFactory::load($fileName);
 
 		$highestRow = $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
 		$highestColumn = $objPHPExcel->setActiveSheetIndex(0)->getHighestColumn();
@@ -92,6 +96,8 @@ if (strlen($_FILES["file"]["name"])>4){
 					}
 				}
 			}
+		//echo "<br>";
+
 		}
 
 		unset($objPHPExcel);
@@ -208,9 +214,6 @@ if (strlen($_FILES["file"]["name"])>4){
 		$activeSheet->getColumnDimension('F')->setWidth(15);
 		$activeSheet->getColumnDimension('G')->setWidth(15);
 		
-        $activeSheet->mergeCells('A1:H1');
-        $activeSheet->getStyle('A1')->getFont()->setBold(true);
-        $activeSheet->setCellValueByColumnAndRow(0, 1, 'Εβδομαδιαίο πρόγραμμα δρομολογίων καθηγητών');
 		for ($day = 0; $day <= DAYS_PER_WEEK-1; ++$day)//foreach ($dromo_array as $day_dromos) 
 		{
 			$line_no += 2;
@@ -219,7 +222,6 @@ if (strlen($_FILES["file"]["name"])>4){
 			$activeSheet->getStyle('A'.$line_no)->getFill()//set return passenger background
 						->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
 						->getStartColor()->setARGB('FFFFFFFF');
-			$activeSheet->getStyle('A'.$line_no)->getFont()->setBold(true);
 			$activeSheet->setCellValueByColumnAndRow(0, $line_no, $day_names[$day]);
 			$line_no += 1;
 			
@@ -236,7 +238,7 @@ if (strlen($_FILES["file"]["name"])>4){
 			foreach($cars[$day] as $car){
 				$line_no += 2;
 				$activeSheet->getStyle('A'.$line_no.':M'.($line_no+1))->getFont()->setSize(8);
-				if ( $line_no/2 & 1 ) {//even odd lines set different color
+				if ( $line_no/2 & 1 ) {
 					/*$activeSheet->getStyle('D'.$line_no.':G'.$line_no)->getFill() //set leave passenger background
 						->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
 						->getStartColor()->setARGB('FFF0F8FF');*/
@@ -286,50 +288,38 @@ if (strlen($_FILES["file"]["name"])>4){
 		$activeSheet->getStyle('A1:H'.($line_no+1))->applyFromArray($styleArray);
 		unset($styleArray);
 		///////////////////////////add statistics area
-        $highestRow = $activeSheet->getHighestRow();
-        $stats_startrow = $highestRow+2;
-		$activeSheet->setCellValueByColumnAndRow(2, $stats_startrow, 'Στατιστικά (για να δουλεύουν σωστά πρέπει οι regular expressions (κανονικές εκφράσεις) να είναι ενεργοποιημένες στο λογιστικό φύλλο (στο Libre Office Calc: Εργαλεία/επιλογές-LibreOffice Calc-Υπολογισμός-Ενεργοποίηση κανονικών εκφράσεων σε τύπους))');
-		$activeSheet->setCellValueByColumnAndRow(2, $stats_startrow+1, 'Οδηγός');
-		$activeSheet->setCellValueByColumnAndRow(3, $stats_startrow+1, 'Οδήγηση εβδομάδας');
-		$activeSheet->setCellValueByColumnAndRow(4, $stats_startrow+1, 'Χρήση εβδομάδας');
-		$activeSheet->setCellValueByColumnAndRow(5, $stats_startrow+1, 'Οδήγηση προηγούμενων εβδομάδων');
-		$activeSheet->setCellValueByColumnAndRow(6, $stats_startrow+1, 'Χρήση προηγούμενων εβδομάδων');
-		$activeSheet->setCellValueByColumnAndRow(7, $stats_startrow+1, 'Οδηγηση συνολικά');
-		$activeSheet->setCellValueByColumnAndRow(8, $stats_startrow+1, 'Χρήση συνολικά');
-		$activeSheet->setCellValueByColumnAndRow(9, $stats_startrow+1, 'Χρήση/οδήγηση');
+		$activeSheet->setCellValueByColumnAndRow(9, 1, 'Στατιστικά (για να δουλεύουν σωστά πρέπει οι regular expressions (κανονικές εκφράσεις) να είναι ενεργοποιημένες στο λογιστικό φύλλο (στο Libre Office Calc: Εργαλεία/επιλογές-LibreOffice Calc-Υπολογισμός-Ενεργοποίηση κανονικών εκφράσεων σε τύπους))');
+		$activeSheet->setCellValueByColumnAndRow(9, 2, 'Οδηγός');
+		$activeSheet->setCellValueByColumnAndRow(10, 2, 'οδ.εβδ-Οδήγηση εβδομάδας');
+		$activeSheet->setCellValueByColumnAndRow(11, 2, 'χρ.εβδ-Χρήση εβδομάδας');
+		$activeSheet->setCellValueByColumnAndRow(12, 2, 'οδ.πρ-Οδήγηση προηγούμενων εβδομάδων');
+		$activeSheet->setCellValueByColumnAndRow(13, 2, 'χρ.πρ-Χρήση προηγούμενων εβδομάδων');
+		$activeSheet->setCellValueByColumnAndRow(14, 2, 'συν.οδ-Οδηγηση συνολικά');
+		$activeSheet->setCellValueByColumnAndRow(15, 2, 'συν.χρ-Χρήση συνολικά');
+		$activeSheet->setCellValueByColumnAndRow(16, 2, 'χρήση/οδήγηση');
 		
-        //set header bgcolor for stats
-        $activeSheet->getStyle('D'.($stats_startrow+1).':E'.($stats_startrow+1))->getFill()//set return passenger background
-						->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-						->getStartColor()->setARGB('FFFAEBD7');
-         $activeSheet->getStyle('H'.($stats_startrow+1).':I'.($stats_startrow+1))->getFill()//set return passenger background
-						->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-						->getStartColor()->setARGB('FFFAEBD7');
-                        
-		/*$activeSheet->getColumnDimension('K')->setWidth(4);
+		$activeSheet->getColumnDimension('K')->setWidth(4);
 		$activeSheet->getColumnDimension('L')->setWidth(4);
 		$activeSheet->getColumnDimension('M')->setWidth(4);
 		$activeSheet->getColumnDimension('N')->setWidth(4);
 		$activeSheet->getColumnDimension('O')->setWidth(4);
 		$activeSheet->getColumnDimension('P')->setWidth(4);
-		$activeSheet->getColumnDimension('Q')->setWidth(5);		*/
+		$activeSheet->getColumnDimension('Q')->setWidth(5);		
 		sort($passenger_names);
-		$row = $stats_startrow+2;
-		//$highestRow = $activeSheet->getHighestRow();
-        //put names and stats
+		$row = 3;
+		$highestRow = $activeSheet->getHighestRow();
 		foreach($passenger_names as $passenger_name){
-			$activeSheet->setCellValueByColumnAndRow(2, $row, $passenger_name.'.*');
-			$activeSheet->setCellValueByColumnAndRow(3, $row, '=COUNTIF(C$1:C$'.$highestRow.', C'.$row.')'); //Οδήγηση εβδομάδας
-			$activeSheet->setCellValueByColumnAndRow(4, $row, '=COUNTIF(D$1:G$'.$highestRow.', C'.$row.')/2');//Χρήση εβδομάδας
-			$activeSheet->setCellValueByColumnAndRow(7, $row, '=D'.$row.'+F'.$row); //Οδηγ. σύνολ
-			$activeSheet->setCellValueByColumnAndRow(8, $row, '=E'.$row.'+G'.$row); //Χρήση σύνολ
-			$activeSheet->setCellValueByColumnAndRow(9, $row, '=I'.$row.'/H'.$row);//Χρήση/οδηγ
-			$activeSheet->getStyleByColumnAndRow(9, $row)->getNumberFormat()->setFormatCode('0.00'); 
+			$activeSheet->setCellValueByColumnAndRow(9, $row, $passenger_name.'.*');
+			$activeSheet->setCellValueByColumnAndRow(10, $row, '=COUNTIF(C$1:C$'.$highestRow.', J'.$row.')'); //Οδήγηση εβδομάδας
+			$activeSheet->setCellValueByColumnAndRow(11, $row, '=COUNTIF(D$1:G$'.$highestRow.', J'.$row.')/2');//Χρήση εβδομάδας
+			$activeSheet->setCellValueByColumnAndRow(14, $row, '=K'.$row.'+M'.$row); //Οδηγ. σύνολ
+			$activeSheet->setCellValueByColumnAndRow(15, $row, '=L'.$row.'+N'.$row); //Χρήση σύνολ
+			$activeSheet->setCellValueByColumnAndRow(16, $row, '=P'.$row.'/O'.$row);//Χρήση/οδηγ
 			//=COUNTIF(C$1:C$45;J5) 
 			//$activeSheet->setCellValueExplicit('K' . $row, '=COUNTIF(C$1:C$'.$highestRow.';J'.$row.')');
 			$row += 1;
 		}
-		$activeSheet->getStyle('C'.($stats_startrow+1).':J'.$row)->getFont()->setSize(8);
+		$activeSheet->getStyle('J2:Q'.$row)->getFont()->setSize(8);
 		
 		// Redirect output to a client’s web browser (Excel5)
 		header('Content-Type: application/vnd.ms-excel');
