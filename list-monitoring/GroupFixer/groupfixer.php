@@ -2,8 +2,8 @@
 //error_reporting(E_ALL);
 //ini_set('display_errors', 1);
 
-require_once('../PhpExcelClasses/PHPExcel.php');
-require_once('../PhpExcelClasses/PHPExcel/IOFactory.php');
+require_once('PHPExcel.php');
+require_once('PHPExcel/IOFactory.php');
 require_once('groupfixer_classes.php');
 const HOURS_PER_DAY = 7; 
 const DAYS_PER_WEEK = 5;
