@@ -44,6 +44,7 @@ end
 
 get '/:teacher_name' do
   t = params[:teacher_name]
+  redirect / unless t
   allTeachers[t] = (allTeachers[t]+1)%2
   db.execute("UPDATE teachers SET using_groups=#{allTeachers[t]} where timetables_name='#{t}'")
   redirect '/'
