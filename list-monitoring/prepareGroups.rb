@@ -8,6 +8,7 @@ load "forbiden"
 
 programmers = ["charitakis.ioannis@gmail.com",
                "tkodellas@gmail.com",
+               "glemon1@gmail.com",
                "manosski@yahoo.com",
                "epalmoiron.yp@gmail.com"]
 
