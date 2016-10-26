@@ -66,6 +66,7 @@ Mail.all.each do |m|
 
         %x{ ruby filterTeachers.rb }
         %x{ cd GroupFixer && php groupfixer.php > READY.xls }
+	sleep 15
         if File.exist?('GroupFixer/READY.xls')
           Mail.deliver do
             charset = "UTF-8"
