@@ -7,6 +7,8 @@ require 'roo-xls'
 require 'mail'
 load "forbiden"
 
+raise "Configuration error, check SCHEDULE_ARCHIVE" unless File.exist?(SCHEDULE_ARCHIVE)
+
 ME = "artemis1epalmoiron@gmail.com"
 TESTING = true #will send emails to me 
 
@@ -31,6 +33,16 @@ Mail.defaults do
                   password: PASSWORD,
                   authentication: 'plain',
                   enable_starttls_auto: true)
+end
+
+def saveLocal(attachment)
+  filename = attachment.filename
+  if not File.exist?("tmp/")
+    FileUtils.mkdir("tmp")
+  end
+  FileUtils.rm("tmp/#{filename}") if File.exist?("tmp/#{filename}")
+
+  File.open("tmp/#{filename}", "w+b", 0644) {|f| f.write attachment.body.decoded}
 end
 
 def informSchedulersOfMissing(email, missingFiles)
@@ -72,6 +84,37 @@ def informSchedulersOfMissing(email, missingFiles)
     end
   end
 end
+
+def informProgramOk
+  Mail.deliver do
+    charset = "UTF-8"
+    content_transfer_encoding="8bit"
+    from 'Αρτέμης Μάτσας <artemis1epalmoiron@gmail.com>'
+    if not TESTING
+      to 'tkodellas@gmail.com'
+      cc 'charitakis.ioannis@gmail.com'
+    else
+      to 'charitakis.ioannis@gmail.com'
+      cc 'bp10.charitakis@gmail.com'
+      cc 'tmp123@ych.gr'
+    end
+    subject 'Το πρόγραμμα δημοσιεύθηκε!'
+    text_part do
+      content_type "text/plain; charset=utf-8"
+      body <<-EOF
+Γειά σας,
+
+Δημοσίευσα το ωρολόγιο πρόγραμμα!
+
+Παρακαλώ κάντε έναν έλεγχο ότι όλα είναι εντάξει!
+
+Με τιμή,
+Αρτέμης Μάτσας
+      EOF
+    end
+  end
+end
+
 
 def emailFile(filename)
   Mail.deliver do
@@ -144,9 +187,13 @@ Mail.all.each do |m|
 
     m.attachments.each do |a|
       filename = a.filename
+      saveLocal(a)
       puts "New attachment #{filename}"
       foundFiles << notFoundFiles.select { |f| filename =~ /#{Regexp.escape(f)}/ } 
-      foundFiles << "roz file (AscTimetables file)" if filename =~ /.*roz/
+      if filename =~ /.*roz/
+        foundFiles << filename
+        notFoundFiles = notFoundFiles - ["roz file (AscTimetables file)"]
+      end
       if filename =~ /EXCEL\.xls/
         xlsFound = true
         puts "Schedule EXCEL.xls found. Saving"
@@ -184,6 +231,29 @@ Mail.all.each do |m|
     else
       puts "ALL FILES IN PLACE!"
       puts "PUBLISH THE PROGRAM AND INFORM THE SCHEDULERS"
+      now = DateTime.now
+      next_week = now + 7
+      current_year = now.year
+      current_week = now.cweek
+      next_year = next_week.year
+      next_week = next_week.cweek
+
+      pathToNextYear = "#{SCHEDULE_ARCHIVE}/#{next_year}"
+      if not File.exist?(pathToNextYear)
+        FileUtils.mkdir(pathToNextYear)
+      end
+      pathToNextWeek = pathToNextYear + "/w#{next_week}"
+      if not File.exist?(pathToNextWeek)
+        FileUtils.mkdir(pathToNextWeek)
+      end
+      foundFiles.each do |f|
+        FileUtils.mv("tmp/#{f}", pathToNextWeek)
+      end
+      FileUtils.rm(SCHEDULE_CURRENT_LINK) if File.exist?(SCHEDULE_CURRENT_LINK)
+      FileUtils.mv(SCHEDULE_NEXT_LINK, SCHEDULE_CURRENT_LINK) if File.exist?(SCHEDULE_NEXT_LINK)
+      FileUtils.ln_s(pathToNextWeek, SCHEDULE_NEXT_LINK)
+
+      informProgramOk
     end
   end
 end
