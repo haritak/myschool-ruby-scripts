@@ -53,11 +53,10 @@ def informSchedulersOfMissing(email, missingFiles)
     from 'Αρτέμης Μάτσας <artemis1epalmoiron@gmail.com>'
     if not TESTING
       to 'tkodellas@gmail.com'
-      cc 'charitakis.ioannis@gmail.com'
+      cc programmers.join(",")
     else
       to 'charitakis.ioannis@gmail.com'
-      cc 'bp10.charitakis@gmail.com'
-      cc 'tmp123@ych.gr'
+      cc 'bp10.charitakis@gmail.com,tmp123@ych.gr'
     end
     subject 'Λείπουν αρχεία!'
     text_part do
@@ -71,7 +70,7 @@ def informSchedulersOfMissing(email, missingFiles)
 '#{email.from}'
 και από τα παραπάνω υπέθεσα ότι περιέχει το Ωρολόγιο Πρόγραμμα.
 
-Λυπάμαι αλλά πρέπει να σας ενημερώσω ότι απο τα αρχεία για το ωρολόγιο
+Πρέπει να σας ενημερώσω ότι απο τα αρχεία για το ωρολόγιο
 πρόγραμμα που στέιλατε λείπουν τα παρακάτω:
 '#{missing_files}'
 
@@ -80,6 +79,8 @@ def informSchedulersOfMissing(email, missingFiles)
 
 Με τιμή,
 Αρτέμης Μάτσας
+υγ: Το email περιλαμβάνει στους παραλήπτες όλους όσους
+ασχολούνται με το ωρολόγιο πρόγραμμα.
       EOF
     end
   end
@@ -92,11 +93,10 @@ def informProgramOk
     from 'Αρτέμης Μάτσας <artemis1epalmoiron@gmail.com>'
     if not TESTING
       to 'tkodellas@gmail.com'
-      cc 'charitakis.ioannis@gmail.com'
+      cc programmers.join(",")
     else
       to 'charitakis.ioannis@gmail.com'
-      cc 'bp10.charitakis@gmail.com'
-      cc 'tmp123@ych.gr'
+      cc 'bp10.charitakis@gmail.com,tmp123@ych.gr'
     end
     subject 'Το πρόγραμμα δημοσιεύθηκε!'
     text_part do
@@ -108,8 +108,12 @@ def informProgramOk
 
 Παρακαλώ κάντε έναν έλεγχο ότι όλα είναι εντάξει!
 
+http://srv-1tee-moiron.ira.sch.gr/epalmoiron/wordpress/?page_id=966
+
 Με τιμή,
 Αρτέμης Μάτσας
+υγ: Το email περιλαμβάνει στους παραλήπτες όλους όσους
+ασχολούνται με το ωρολόγιο πρόγραμμα.
       EOF
     end
   end
@@ -142,7 +146,6 @@ http://srv-1tee-moiron.ira.sch.gr:4567/ αλλά
 μετά θα πρέπει να μου στείλετε (σε εμένα, όχι σε λίστα) άλλο ένα email
 με συννημμένο το αρχείο EXCEL.xls 
 έτσι ώστε να ξαναπιάσω δουλειά.
-
 
 Με τιμή,
 Αρτέμης Μάτσας
@@ -229,8 +232,6 @@ Mail.all.each do |m|
       puts notFoundFiles
       informSchedulersOfMissing(m, notFoundFiles)
     else
-      puts "ALL FILES IN PLACE!"
-      puts "PUBLISH THE PROGRAM AND INFORM THE SCHEDULERS"
       now = DateTime.now
       next_week = now + 7
       current_year = now.year
@@ -253,11 +254,10 @@ Mail.all.each do |m|
       FileUtils.mv(SCHEDULE_NEXT_LINK, SCHEDULE_CURRENT_LINK) if File.exist?(SCHEDULE_NEXT_LINK)
       FileUtils.ln_s(pathToNextWeek, SCHEDULE_NEXT_LINK)
 
+      puts "Program published"
       informProgramOk
     end
   end
 end
 
-if not TESTING
-  Mail.find_and_delete
-end
+Mail.find_and_delete
