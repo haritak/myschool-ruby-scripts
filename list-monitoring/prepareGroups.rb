@@ -32,10 +32,12 @@ end
 Mail.all.each do |m|
 
   sender = m.from
+  recipients = m.to + m.cc + m.bcc
   puts
   puts "-----"
-  puts m.from
+  puts sender
   puts m.subject
+  puts recipients
 
 
   if programmers.map{|p| sender.include? p}.include?(true)
@@ -135,4 +137,4 @@ http://srv-1tee-moiron.ira.sch.gr:4567/ αλλά
   end
 end
 
-Mail.find_and_delete
+#Mail.find_and_delete
