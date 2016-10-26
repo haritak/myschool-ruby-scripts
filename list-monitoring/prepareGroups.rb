@@ -8,9 +8,9 @@ require 'mail'
 load "forbiden"
 
 raise "Configuration error, check SCHEDULE_ARCHIVE" unless File.exist?(SCHEDULE_ARCHIVE)
+raise "Configuration error, check TESTING" unless TESTING==false or TESTING==true
 
 ME = "artemis1epalmoiron@gmail.com"
-TESTING = true #will send emails to me 
 
 programmers = ["charitakis.ioannis@gmail.com",
                "tkodellas@gmail.com",
