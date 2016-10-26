@@ -12,7 +12,7 @@ raise "Configuration error, check TESTING" unless TESTING==false or TESTING==tru
 
 ME = "artemis1epalmoiron@gmail.com"
 
-programmers = ["charitakis.ioannis@gmail.com",
+$programmers = ["charitakis.ioannis@gmail.com",
                "tkodellas@gmail.com",
                "glemon1@gmail.com",
                "manosski@yahoo.com",
@@ -53,7 +53,7 @@ def informSchedulersOfMissing(email, missingFiles)
     from 'Αρτέμης Μάτσας <artemis1epalmoiron@gmail.com>'
     if not TESTING
       to 'tkodellas@gmail.com'
-      cc programmers.join(",")
+      cc $programmers.join(",")
     else
       to 'charitakis.ioannis@gmail.com'
       cc 'bp10.charitakis@gmail.com,tmp123@ych.gr'
@@ -93,7 +93,7 @@ def informProgramOk
     from 'Αρτέμης Μάτσας <artemis1epalmoiron@gmail.com>'
     if not TESTING
       to 'tkodellas@gmail.com'
-      cc programmers.join(",")
+      cc $programmers.join(",")
     else
       to 'charitakis.ioannis@gmail.com'
       cc 'bp10.charitakis@gmail.com,tmp123@ych.gr'
@@ -165,7 +165,7 @@ Mail.all.each do |m|
   puts recipients
 
 
-  if programmers.map{|p| sender.include? p}.include?(true)
+  if $programmers.map{|p| sender.include? p}.include?(true)
     puts "This email was sent from one of the persons that works on the schedule"
 
     personal = recipients.include?(ME)
@@ -187,6 +187,7 @@ Mail.all.each do |m|
       "KATANOMI.xls",
       "roz file (AscTimetables file)"]
 
+    rozFilename = ''
 
     m.attachments.each do |a|
       filename = a.filename
@@ -195,6 +196,7 @@ Mail.all.each do |m|
       foundFiles << notFoundFiles.select { |f| filename =~ /#{Regexp.escape(f)}/ } 
       if filename =~ /.*roz/
         foundFiles << filename
+        rozFilename = filename
         notFoundFiles = notFoundFiles - ["roz file (AscTimetables file)"]
       end
       if filename =~ /EXCEL\.xls/
@@ -227,37 +229,41 @@ Mail.all.each do |m|
 
     notFoundFiles = notFoundFiles - foundFiles
 
-    if titleHintsSchedule and notFoundFiles.size!=0
-      puts "Missing files"
-      puts notFoundFiles
-      informSchedulersOfMissing(m, notFoundFiles)
-    else
-      now = DateTime.now
-      next_week = now + 7
-      current_year = now.year
-      current_week = now.cweek
-      next_year = next_week.year
-      next_week = next_week.cweek
+    if titleHintsSchedule then
+      if  notFoundFiles.size!=0
+        puts "Missing files"
+        puts notFoundFiles
+        informSchedulersOfMissing(m, notFoundFiles)
+      else 
+        now = DateTime.now
+        next_week = now + 7
+        current_year = now.year
+        current_week = now.cweek
+        next_year = next_week.year
+        next_week = next_week.cweek
+  
+        pathToNextYear = "#{SCHEDULE_ARCHIVE}/#{next_year}"
+        if not File.exist?(pathToNextYear)
+          FileUtils.mkdir(pathToNextYear)
+        end
+        pathToNextWeek = pathToNextYear + "/w#{next_week}"
+        if not File.exist?(pathToNextWeek)
+          FileUtils.mkdir(pathToNextWeek)
+        end
+        foundFiles.each do |f|
+          FileUtils.mv("tmp/#{f}", pathToNextWeek)
+        end
+        FileUtils.rm(SCHEDULE_CURRENT_LINK) if File.exist?(SCHEDULE_CURRENT_LINK)
+        FileUtils.mv(SCHEDULE_NEXT_LINK, SCHEDULE_CURRENT_LINK) if File.exist?(SCHEDULE_NEXT_LINK)
+        FileUtils.ln_s(pathToNextWeek, SCHEDULE_NEXT_LINK)
+        FileUtils.cp("index.html", SCHEDULE_NEXT_LINK)
+        FileUtils.mv(pathToNextWeek+"/#{rozFilename}", pathToNextWeek+"/FINAL.roz")
 
-      pathToNextYear = "#{SCHEDULE_ARCHIVE}/#{next_year}"
-      if not File.exist?(pathToNextYear)
-        FileUtils.mkdir(pathToNextYear)
+        puts "Program published"
+        informProgramOk
+	end
       end
-      pathToNextWeek = pathToNextYear + "/w#{next_week}"
-      if not File.exist?(pathToNextWeek)
-        FileUtils.mkdir(pathToNextWeek)
-      end
-      foundFiles.each do |f|
-        FileUtils.mv("tmp/#{f}", pathToNextWeek)
-      end
-      FileUtils.rm(SCHEDULE_CURRENT_LINK) if File.exist?(SCHEDULE_CURRENT_LINK)
-      FileUtils.mv(SCHEDULE_NEXT_LINK, SCHEDULE_CURRENT_LINK) if File.exist?(SCHEDULE_NEXT_LINK)
-      FileUtils.ln_s(pathToNextWeek, SCHEDULE_NEXT_LINK)
-
-      puts "Program published"
-      informProgramOk
     end
-  end
 end
 
 Mail.find_and_delete
