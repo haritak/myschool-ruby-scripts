@@ -235,32 +235,34 @@ Mail.all.each do |m|
         puts notFoundFiles
         informSchedulersOfMissing(m, notFoundFiles)
       else 
-        now = DateTime.now
-        next_week = now + 7
-        current_year = now.year
-        current_week = now.cweek
-        next_year = next_week.year
-        next_week = next_week.cweek
-  
-        pathToNextYear = "#{SCHEDULE_ARCHIVE}/#{next_year}"
-        if not File.exist?(pathToNextYear)
-          FileUtils.mkdir(pathToNextYear)
-        end
-        pathToNextWeek = pathToNextYear + "/w#{next_week}"
-        if not File.exist?(pathToNextWeek)
-          FileUtils.mkdir(pathToNextWeek)
-        end
-        foundFiles.each do |f|
-          FileUtils.mv("tmp/#{f}", pathToNextWeek)
-        end
-        FileUtils.rm(SCHEDULE_CURRENT_LINK) if File.exist?(SCHEDULE_CURRENT_LINK)
-        FileUtils.mv(SCHEDULE_NEXT_LINK, SCHEDULE_CURRENT_LINK) if File.exist?(SCHEDULE_NEXT_LINK)
-        FileUtils.ln_s(pathToNextWeek, SCHEDULE_NEXT_LINK)
-        FileUtils.cp("index.html", SCHEDULE_NEXT_LINK)
-        FileUtils.mv(pathToNextWeek+"/#{rozFilename}", pathToNextWeek+"/FINAL.roz")
+        if personal
+          now = DateTime.now
+          next_week = now + 7
+          current_year = now.year
+          current_week = now.cweek
+          next_year = next_week.year
+          next_week = next_week.cweek
 
-        puts "Program published"
-        informProgramOk
+          pathToNextYear = "#{SCHEDULE_ARCHIVE}/#{next_year}"
+          if not File.exist?(pathToNextYear)
+            FileUtils.mkdir(pathToNextYear)
+          end
+          pathToNextWeek = pathToNextYear + "/w#{next_week}"
+          if not File.exist?(pathToNextWeek)
+            FileUtils.mkdir(pathToNextWeek)
+          end
+          foundFiles.each do |f|
+            FileUtils.mv("tmp/#{f}", pathToNextWeek)
+          end
+          FileUtils.rm(SCHEDULE_CURRENT_LINK) if File.exist?(SCHEDULE_CURRENT_LINK)
+          FileUtils.mv(SCHEDULE_NEXT_LINK, SCHEDULE_CURRENT_LINK) if File.exist?(SCHEDULE_NEXT_LINK)
+          FileUtils.ln_s(pathToNextWeek, SCHEDULE_NEXT_LINK)
+          FileUtils.cp("index.html", SCHEDULE_NEXT_LINK)
+          FileUtils.mv(pathToNextWeek+"/#{rozFilename}", pathToNextWeek+"/FINAL.roz")
+
+          puts "Program published"
+          informProgramOk
+        end
 	end
       end
     end
