@@ -30,11 +30,12 @@ get '/' do
   toReturn="<ul>"
   allTeachers.each do |t, i|
     toReturn += "<li><a href='/#{t}'>"
-    toReturn += "#{t}"
     if i==0
-      toReturn += " is excluded"
+      toReturn += "<font color='red'>#{t}"
+      toReturn += " is excluded</font>"
     else
-      toReturn += " is INCLUDED"
+      toReturn += "<font color='green'>#{t}"
+      toReturn += " is INCLUDED</font>"
     end
     toReturn += "</a></li>"
   end
