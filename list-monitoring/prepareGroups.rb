@@ -158,6 +158,7 @@ Mail.all.each do |m|
 
   sender = m.from
   recipients = "#{m.to} #{m.cc} #{m.bcc}"
+  personal = recipients.include?(ME)
   puts
   puts "-----"
   puts sender
@@ -168,7 +169,6 @@ Mail.all.each do |m|
   if $programmers.map{|p| sender.include? p}.include?(true)
     puts "This email was sent from one of the persons that works on the schedule"
 
-    personal = recipients.include?(ME)
     puts "This email was specifically sent to me" if personal
 
     titleHintsSchedule = (m.subject =~ /.*ρολ.γιο.*ρ.γραμ.*/)
