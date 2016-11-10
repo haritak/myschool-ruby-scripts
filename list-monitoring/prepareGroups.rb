@@ -269,4 +269,7 @@ Mail.all.each do |m|
     end
 end
 
+puts "Email process ended"
+puts "Deleting emails"
 Mail.find_and_delete
+puts "Bye!"
