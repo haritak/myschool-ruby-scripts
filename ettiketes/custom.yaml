@@ -19,3 +19,16 @@ Avery18036:
     column_gutter: 0
     row_gutter: 0
 
+TypoLabel6511:
+  paper_size: A4
+  top_margin: 29.1
+  bottom_margin: 29.1
+  left_margin: 28.3
+  right_margin: 28.43
+  columns: 5
+  rows: 13
+  column_gutter: 0
+  row_gutter: 0
+
+
+
