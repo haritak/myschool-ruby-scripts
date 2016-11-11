@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'roo'
+require 'sqlite3'
 
 DaysColumn = 1
 LocationsColumn = 2
@@ -194,5 +195,21 @@ if totalEfimeries!=total_efimeries_per_day*5
   puts "Consistency error!"
 end
  
+puts "Updating emails.db"
+FileUtils.touch('emails.db')
+db = SQLite3::Database.open "emails.db"
+db.execute "CREATE TABLE IF NOT EXISTS teachers(name TEXT PRIMARY KEY, email TEXT)"
+stm = db.prepare "SELECT * FROM teachers"
+rs = stm.execute
 
+stm.close
+teachers.each do |teacher|
+  begin
+    db.execute "INSERT INTO teachers VALUES('#{teacher}','')"
+  rescue SQLite3::ConstraintException => e
+    puts e
+    puts "ignoring..."
+  end
+end
+puts "Update of emails.db finished"
 
