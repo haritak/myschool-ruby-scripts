@@ -154,6 +154,7 @@ http://srv-1tee-moiron.ira.sch.gr:4567/ αλλά
   end
 end
 
+puts "Starting email processing..."
 Mail.all.each do |m|
 
   sender = m.from
@@ -268,4 +269,7 @@ Mail.all.each do |m|
     end
 end
 
+puts "Email process ended"
+puts "Deleting emails"
 Mail.find_and_delete
+puts "Bye!"
