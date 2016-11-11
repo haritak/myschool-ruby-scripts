@@ -213,3 +213,48 @@ teachers.each do |teacher|
 end
 puts "Update of emails.db finished"
 
+emailsPerTeacher={}
+stm = db.prepare "SELECT * FROM teachers"
+rs = stm.execute
+tmp = rs.map{|r| {r[0]=>r[1]} }
+tmp.each do |e|
+  emailsPerTeacher.update(e)
+end
+
+
+require 'mail'
+load "forbiden"
+
+Mail.defaults do
+  retriever_method :imap, 
+    :address    => "imap.googlemail.com",
+    :port       => 993,
+    :user_name  => USERNAME,
+    :password   => PASSWORD,
+    :enable_ssl => true
+
+  delivery_method(:smtp, 
+                  address: "smtp.gmail.com", 
+                  port: 587, 
+                  user_name: USERNAME,
+                  password: PASSWORD,
+                  authentication: 'plain',
+                  enable_starttls_auto: true)
+end
+
+def sendEmail(teacher, email, efimeries)
+  if email!=nil and email.strip != ''
+    puts "Will send an email to #{teacher}"
+    puts email
+    efimeries.each do |e|
+      print e
+      puts
+    end
+    puts ""
+    puts "-------------------"
+  end
+end
+
+efimeriesPerTeacher.each do |k,v|
+  sendEmail(k, emailsPerTeacher[k], v)
+end
