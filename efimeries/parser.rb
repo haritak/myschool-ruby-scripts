@@ -96,6 +96,41 @@ puts "Teachers names should be inside the box "+
   "#{rowOfFirstDayFirstPlace},#{columnOfFirstIntermission} and "+
   "#{rowOfLastDayLastPlace}, #{columnOfLastIntermission}"
 
+column2intermission={}
+intermissions.each do |k,v|
+  colNo = v+1
+  if column2intermission[colNo] != nil
+    puts "Error! Duplicate v for intermission"
+    exit
+  end
+  column2intermission[colNo] = k
+end
+#p column2intermission
+
+row2location = {}
+locations.each do |k,v|
+  v.each do |r|
+    rowNo=r+1
+    if row2location[rowNo] != nil
+      puts "Error! Duplicate v for location"
+    end
+    row2location[rowNo] = k
+  end
+end
+#p row2location
+
+row2day={}
+dayrows.each do |k,v|
+  v.each do |r|
+    rowNo=r+1
+    if row2day[rowNo] != nil
+      puts "Error! Duplicate v for day"
+    end
+    row2day[rowNo] = k
+  end
+end
+#p row2day
+
 current_row_no = rowOfFirstDayFirstPlace
 while current_row_no <= rowOfLastDayLastPlace
   current_column_no = columnOfFirstIntermission
@@ -108,17 +143,56 @@ while current_row_no <= rowOfLastDayLastPlace
 end
 
 puts "#{teachers.size} teachers found"
-total_efimeries = locations.size * intermissions.size
-puts "#{total_efimeries} are the total number of efimeries"
-efimeries_per_person = ((total_efimeries.to_f/teachers.size) + 0.5).round
+total_efimeries_per_day = locations.size * intermissions.size
+puts "#{total_efimeries_per_day} are the total number of efimeries"
+efimeries_per_person = ((total_efimeries_per_day.to_f/teachers.size) + 0.5).round
 puts "#{efimeries_per_person} efimeries should receive each person per day"
 puts "#{efimeries_per_person*5} efimeries should receive each person per week"
- 
 
+efimeriesPerTeacher = {}
+teachers.each do |teacher|
 
-dayrows.each do |day,rows|
+  current_row_no = rowOfFirstDayFirstPlace
+  while current_row_no <= rowOfLastDayLastPlace
+    current_column_no = columnOfFirstIntermission
+    while current_column_no<=columnOfLastIntermission
+      cell = sheet.cell(current_row_no, current_column_no)
+
+      if cell==teacher
+        theDay = row2day[ current_row_no ]
+        theLocation = row2location[ current_row_no ]
+        theIntermission = column2intermission[ current_column_no ]
+        if theDay==nil or theLocation==nil or theIntermission==nil
+          puts "Miss hit!"
+          exit
+        end
+        efimeriesPerTeacher[teacher] = [] if efimeriesPerTeacher[teacher] == nil
+        efimeriesPerTeacher[teacher] << [theDay, theLocation,theIntermission]
+      end
+      
+      current_column_no+=1
+    end
+    current_row_no+=1
+  end
 end
 
+totalEfimeries = 0
+countEfimeriesPerTeacher = {}
+efimeriesPerTeacher.each do |k,v|
+  puts k
+  v.each do |l|
+    p l
+  end
+  countEfimeriesPerTeacher[ k ] = v.size
+  totalEfimeries+=v.size
+  puts "-----"
+end
 
+p countEfimeriesPerTeacher
+puts "#{totalEfimeries} efimeries have been assigned"
+if totalEfimeries!=total_efimeries_per_day*5
+  puts "Consistency error!"
+end
+ 
 
 
