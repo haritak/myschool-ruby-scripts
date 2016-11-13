@@ -2,7 +2,7 @@ require 'sinatra'
 require 'sqlite3'
 
 set :bind, '0.0.0.0'
-set :port, 3713
+set :port, 13713
 
 FileUtils.touch('emails.db')
 
@@ -43,8 +43,8 @@ get '/:teacher_name' do
   e = params[:email]
   if e==nil
     return tR="<form> "+
-    "<input name='email' value='#{allTeachers[t]}'/>"+
-    "<button name='submit'>Γράψ'το</button>" +
+    "email:<input name='email' value='#{allTeachers[t]}'/>"+
+    "<button name='submit'>Στείλε μού τις</button>" +
     "</form>"
   else
     puts "#{t} -> #{e}"
