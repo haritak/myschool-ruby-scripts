@@ -242,12 +242,15 @@ Mail.defaults do
                   enable_starttls_auto: true)
 end
 
+def beautify(efimeria)
+end
+
 def sendEmail(teacher, email, efimeries)
   if email!=nil and email.strip != ''
     puts "Will send an email to #{teacher}"
     puts email
     efimeries.each do |e|
-      print e
+      print beautify(e)
       puts
     end
     puts ""
