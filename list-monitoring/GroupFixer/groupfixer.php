@@ -11,8 +11,20 @@ const START_HOUR_GAP = 1;//gap when day hours start
 //$psnger = new Teacher(); // create passenger object to store passenger data
 $dromo_array = array();
 
-$_FILES["file"]["name"] = "PROCESSED.xls";
-$_FILES["file"]["tmp_name"] = "PROCESSED.xls";
+//----ych
+$handle = new SQLite3("whosin.db");
+
+$sql = "SELECT * FROM teachers WHERE using_groups=1";
+$ret=$handle->query($sql);
+$teachers_included=[];
+while($row = $ret->fetchArray(SQLITE3_ASSOC)) {
+  $teachers_included[]= $row['timetables_name'];
+}
+
+//---ych
+
+$_FILES["file"]["name"] = "EXCEL.xls";
+$_FILES["file"]["tmp_name"] = "EXCEL.xls";
 if (strlen($_FILES["file"]["name"])>4){
 	if ($_FILES["file"]["error"] > 0)
 	  {
@@ -46,6 +58,12 @@ if (strlen($_FILES["file"]["name"])>4){
 			$cell=trim($objWorksheet->getCellByColumnAndRow(0, $row)->getValue()) ;
 			if ($cell>""){
 				$name = $cell;
+        if (!in_array($name, $teachers_included)) {
+          continue;
+        }
+        //echo "\n";
+        //echo $name . "\n";
+        //echo "\n";
 				$name_array=explode(" ",$cell);
 				if (preg_match('/[0-9]+/', $name_array[0])){ //IF THERE IS NUMBER in first substring to catch ΠΕ13..
 					$name = "";
