@@ -16,7 +16,7 @@ $handle = new SQLite3("whosin.db");
 
 $sql = "SELECT * FROM teachers WHERE using_groups=1";
 $ret=$handle->query($sql);
-$teachers_included=[];
+$teachers_included=array();
 while($row = $ret->fetchArray(SQLITE3_ASSOC)) {
   $teachers_included[]= $row['timetables_name'];
 }
