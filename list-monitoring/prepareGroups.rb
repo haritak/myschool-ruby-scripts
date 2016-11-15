@@ -214,7 +214,6 @@ Mail.all.each do |m|
           FileUtils.rm('GroupFixer/READY.xls')
         end
 
-        %x{ ruby filterTeachers.rb }
         %x{ cd GroupFixer && php groupfixer.php > READY.xls }
         puts "Waiting 5 seconds for previous operation to finish"
         sleep 5
