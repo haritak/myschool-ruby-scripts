@@ -173,7 +173,9 @@ Mail.all.each do |m|
     puts "This email was specifically sent to me" if personal
 
     titleHintsSchedule = (m.subject =~ /.*ρολ.γιο.*ρ.γραμ.*/)
+    titleHintsEfimeries = (m.subject =~/.*φημερ.ε.*/)
     puts "Title hints this is the schedule" if titleHintsSchedule
+    puts "Title hints this is the efimeries" if titleHintsEfimeries
 
     xlsFound = false
     foundFiles = []
@@ -223,6 +225,8 @@ Mail.all.each do |m|
           puts "TODO - κάτι στράβωσε στην δημιουργία τους READY.xls"
         end
       end #matches xls
+      if filename =~ /epitir\.ods/
+      end
     end # each attachment
 
     foundFiles.flatten!
