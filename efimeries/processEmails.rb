@@ -30,14 +30,14 @@ puts allTeachers
 get '/' do
   refreshAllTeachers(db, allTeachers)
   puts allTeachers
-  toReturn="<ul>"
+  toReturn="<table>"
   allTeachers.each do |t, e|
-    toReturn += "<li>"
-    toReturn += "<a href='/#{t}'>#{t}</a>"
-    toReturn += "</li>"
+    toReturn += "<tr>"
+    toReturn += "<td>#{t}</td><td>#{e}</td><td><a href='/#{t}'>Καταχώριση/ενημέρωση email.</a></td>"
+    toReturn += "</tr>"
   end
 
-  toReturn+="</ul>"
+  toReturn+="</table>"
 end
 
 get '/:teacher_name' do
