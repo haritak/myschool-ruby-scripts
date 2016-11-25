@@ -7,6 +7,8 @@ require 'roo-xls'
 require 'mail'
 load "forbiden"
 
+TESTING=true #XXX
+
 raise "Configuration error, check SCHEDULE_ARCHIVE" unless File.exist?(SCHEDULE_ARCHIVE)
 raise "Configuration error, check TESTING" unless TESTING==false or TESTING==true
 
@@ -45,7 +47,7 @@ def saveLocal(attachment)
   File.open("tmp/#{filename}", "w+b", 0644) {|f| f.write attachment.body.decoded}
 end
 
-def informSchedulersOfMissing(email, missingFiles)
+def informSchedulersOfMissing(email, missingFiles, msg)
   missing_files = missingFiles.join(",")
   Mail.deliver do
     charset = "UTF-8"
@@ -68,13 +70,13 @@ def informSchedulersOfMissing(email, missingFiles)
 '#{email.subject}'
 το οποίο για την ακρίβεια έχει σταλεί από :
 '#{email.from}'
-και από τα παραπάνω υπέθεσα ότι περιέχει το Ωρολόγιο Πρόγραμμα.
+και από τα παραπάνω υπέθεσα ότι περιέχει #{msg}
 
-Πρέπει να σας ενημερώσω ότι απο τα αρχεία για το ωρολόγιο
-πρόγραμμα που στέιλατε λείπουν τα παρακάτω:
+Πρέπει να σας ενημερώσω ότι απο τα αρχεία 
+που στέιλατε λείπουν τα παρακάτω:
 '#{missing_files}'
 
-Παρακαλώ επαναλάβατε την αποστολή του ωρολόγιου,
+Παρακαλώ επαναλάβατε την αποστολή,
 συμπεριλαμβάνοντας ότι λείπει για να μπορώ να δουλέψω και εγώ.
 
 Με τιμή,
@@ -178,6 +180,7 @@ Mail.all.each do |m|
     puts "Title hints this is the efimeries" if titleHintsEfimeries
 
     xlsFound = false
+    odsEfimeriesFound = false
     foundFiles = []
     notFoundFiles = [
       "EXCEL.xls",
@@ -225,8 +228,18 @@ Mail.all.each do |m|
           puts "TODO - κάτι στράβωσε στην δημιουργία τους READY.xls"
         end
       end #matches xls
-      if filename =~ /epitir\.ods/
-      end
+      if filename =~ /efimeries\.ods/
+        odsEfimeriesFound = true
+        puts "Found efimeries.ods"
+        if File.exists?('efimeries/efimeries.ods')
+          FileUtils.rm('efimeries/efimeries.ods')
+        end
+        File.open("efimeries/efimeries.ods", "w+b", 0644) {|f| f.write a.body.decoded}
+        if not File.exists?('efimeries/efimeries.ods')
+          puts ("Κάτι στράβωσε στην δημιουργία του efimeries.ods")
+          exit
+        end
+      end# efimeries.ods
     end # each attachment
 
     foundFiles.flatten!
@@ -237,7 +250,7 @@ Mail.all.each do |m|
       if  notFoundFiles.size!=0
         puts "Missing files"
         puts notFoundFiles
-        informSchedulersOfMissing(m, notFoundFiles)
+        informSchedulersOfMissing(m, notFoundFiles,'το Ωρολόγιο Πρόγραμμα')
       else 
         if personal
           now = DateTime.now
@@ -266,10 +279,21 @@ Mail.all.each do |m|
 
           puts "Program published"
           informProgramOk
-        end
-	end
-      end
+        end #all files found
+      end #titleHintsSchedule
     end
+    if titleHintsEfimeries then
+      if odsEfimeriesFound
+        puts "Executing external ruby script to send emails"
+        puts %x{cd efimeries && ruby parser.rb }
+        puts "Done"
+      else
+        informSchedulersOfMissing(m, ['efimeries.ods'], 'τις Εφημερίες')
+      end#odsEfimeriesFound
+    end
+
+
+  end
 end
 
 puts "Email process ended"

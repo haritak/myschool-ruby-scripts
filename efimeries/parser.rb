@@ -2,6 +2,25 @@ require 'rubygems'
 require 'roo'
 require 'sqlite3'
 
+require 'mail'
+load "forbiden"
+Mail.defaults do
+  retriever_method :imap, 
+    :address    => "imap.googlemail.com",
+    :port       => 993,
+    :user_name  => USERNAME,
+    :password   => PASSWORD,
+    :enable_ssl => true
+
+  delivery_method(:smtp, 
+                  address: "smtp.gmail.com", 
+                  port: 587, 
+                  user_name: USERNAME,
+                  password: PASSWORD,
+                  authentication: 'plain',
+                  enable_starttls_auto: true)
+end
+
 DaysColumn = 1
 LocationsColumn = 2
 NoIntermissions = 6
@@ -225,23 +244,65 @@ end
 
 def beautify(efimeria)
   ef=""
-  efimeria.each do |k|
-    ef +="#{k} "
+  efimeria.each_with_index do |k,i|
+    if i==0
+      ef +="#{k}: "
+    else
+      ef +="#{k} "
+    end
   end
   ef
 end
 
 def sendEmail(teacher, email, efimeries)
   if email!=nil and email.strip != ''
-    puts "Will send an email to #{email} which corresponds to #{teacher}."
-    emailContent=""
+    emailContent=''
     efimeries.each do |e|
       emailContent += beautify(e)
       emailContent += "\n"
     end
-    puts emailContent
-    puts ""
-    puts "-------------------"
+    Mail.deliver do
+      charset = "UTF-8"
+      content_transfer_encoding="8bit"
+      from 'Αρτέμης Μάτσας <artemis1epalmoiron@gmail.com>'
+      if not TESTING
+        to email
+      else
+        to 'charitakis.ioannis@gmail.com'
+      end
+      subject "#{teacher} Προσωπικές εφημερίες (αυτόματο email)"
+      text_part do
+        content_type "text/plain; charset=utf-8"
+        body <<-EOF
+
+#{teacher},
+ 
+Κοιτώντας την λίστα αλληλογραφίας του ΕΠΑΛ Μοιρών ([Λίστα ΕΠΑΛ]),
+παρατήρησα ότι παραλάβαμε νέες εφημερίες.
+
+Κατόπιν της δικής σας επιθυμίας σας συνοψίζω τί αφορά εσάς:
+
+
+Εφημερίες για #{teacher}
+
+#{emailContent}
+-----------------
+
+Παρακαλώ, επιβεβαιώστε ότι τις έχω εντωπίσει σωστά,
+συγκρίνοντας με το αρχείο που έστειλε ο/η υπεύθυνος/η των εφημεριών.
+
+Επίσης, παρακαλώ μην στηρίζεστε πάνω μου για την ενημέρωση των
+εφημεριών σας. Είμαι ένα απλό πρόγραμμα. Μερικές φορές μπορεί
+να κολλήσω και να μην σας στείλω τίποτα ή να σας στείλω
+άλλα 'ντ' αλλων.
+
+Με τιμή,
+Αρτέμης Μάτσας
+
+        EOF
+      end#text_part
+      puts "Sent an email to #{email} which corresponds to #{teacher}."
+    end#Mail.deliver
   end
 end
 
