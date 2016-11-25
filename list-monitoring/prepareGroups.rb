@@ -7,8 +7,6 @@ require 'roo-xls'
 require 'mail'
 load "forbiden"
 
-TESTING=true #XXX
-
 raise "Configuration error, check SCHEDULE_ARCHIVE" unless File.exist?(SCHEDULE_ARCHIVE)
 raise "Configuration error, check TESTING" unless TESTING==false or TESTING==true
 
