@@ -33,7 +33,7 @@ locations = {}
 teachers = []
 dayrows = {}
 
-oo = Roo::Spreadsheet.open("example.ods")
+oo = Roo::Spreadsheet.open("efimeries.ods")
 
 sheet = oo.sheet(0)
 
@@ -271,6 +271,7 @@ def sendEmail(teacher, email, efimeries)
         to 'charitakis.ioannis@gmail.com'
       end
       subject "#{teacher} Προσωπικές εφημερίες (αυτόματο email)"
+      add_file 'efimeries.ods'
       text_part do
         content_type "text/plain; charset=utf-8"
         body <<-EOF
