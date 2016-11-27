@@ -225,6 +225,7 @@ rs = stm.execute
 
 stm.close
 teachers.each do |teacher|
+  teacher.strip!
   begin
     db.execute "INSERT INTO teachers VALUES('#{teacher}','')"
   rescue SQLite3::ConstraintException => e
