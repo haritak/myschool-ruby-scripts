@@ -120,7 +120,7 @@ http://srv-1tee-moiron.ira.sch.gr/epalmoiron/wordpress/?page_id=966
 end
 
 
-def emailFile(filename)
+def emailFile(filename, filename2)
   Mail.deliver do
     charset = "UTF-8"
     content_transfer_encoding="8bit"
@@ -133,6 +133,7 @@ def emailFile(filename)
     time = Time.new
     subject "Ετοιμο αρχείο READY.xls για αυτά που πήρα στις #{time.day}-#{time.month}"
     add_file filename
+    add_file filename2 if filename2!=''
     text_part do
       content_type "text/plain; charset=utf-8"
       body <<-EOF
@@ -217,11 +218,18 @@ Mail.all.each do |m|
           FileUtils.rm('GroupFixer/READY.xls')
         end
 
+        if File.exist?('GroupFixer/groupfixer_2/READY2.xls') 
+          FileUtils.rm('GroupFixer/groupfixer_2/READY2.xls')
+        end
+
         %x{ cd GroupFixer && php groupfixer.php > READY.xls }
+        %x{ cd GroupFixer/groupfixer_2 && php groupfixer.php > READY2.xls }
         puts "Waiting 5 seconds for previous operation to finish"
         sleep 5
         if File.exist?('GroupFixer/READY.xls')
-          emailFile('GroupFixer/READY.xls')
+          filename2='GroupFixer/groupfixer_2/READY2.xls'
+          filename2='' unless File.exists?(filename2)
+          emailFile('GroupFixer/READY.xls', filename2)
         else
           puts "TODO - κάτι στράβωσε στην δημιουργία τους READY.xls"
         end
