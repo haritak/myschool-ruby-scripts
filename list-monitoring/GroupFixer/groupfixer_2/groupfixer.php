@@ -20,8 +20,8 @@ while($row = $ret->fetchArray(SQLITE3_ASSOC)) {
   $teachers_included[]= $row['timetables_name'];
 }
 
-$_FILES["file"]["name"] = "EXCEL.xls";
-$_FILES["file"]["tmp_name"] = "EXCEL.xls";
+$_FILES["file"]["name"] = "../EXCEL.xls";
+$_FILES["file"]["tmp_name"] = "../EXCEL.xls";
 //---ych
 if (strlen($_FILES["file"]["name"])>4){
 	if ($_FILES["file"]["error"] > 0)
