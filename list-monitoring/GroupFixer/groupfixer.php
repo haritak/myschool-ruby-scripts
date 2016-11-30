@@ -58,10 +58,12 @@ if (strlen($_FILES["file"]["name"])>4){
 			$cell=trim($objWorksheet->getCellByColumnAndRow(0, $row)->getValue()) ;
 			if ($cell>""){
 				$name = $cell;
+        //-->ych
         $name = str_replace("/","_",$name);
         if (!in_array($name, $teachers_included)) {
           continue;
         }
+        //<---ych
         //echo "\n";
         //echo $name . "\n";
         //echo "\n";
