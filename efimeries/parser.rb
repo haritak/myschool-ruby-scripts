@@ -225,6 +225,7 @@ rs = stm.execute
 
 stm.close
 teachers.each do |teacher|
+  teacher.strip!
   begin
     db.execute "INSERT INTO teachers VALUES('#{teacher}','')"
   rescue SQLite3::ConstraintException => e
@@ -289,7 +290,7 @@ def sendEmail(teacher, email, efimeries)
 #{emailContent}
 -----------------
 
-Παρακαλώ, επιβεβαιώστε ότι τις έχω εντωπίσει σωστά,
+Παρακαλώ, επιβεβαιώστε ότι τις έχω εντοπίσει σωστά,
 συγκρίνοντας με το αρχείο που έστειλε ο/η υπεύθυνος/η των εφημεριών.
 
 Επίσης, παρακαλώ μην στηρίζεστε πάνω μου για την ενημέρωση των

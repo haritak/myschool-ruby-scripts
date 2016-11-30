@@ -21,6 +21,7 @@ def refreshAllTeachers(db, allTeachers)
 
   tmp.each do |e|
     allTeachers.update(e)
+    puts e
   end
 end
 
@@ -29,8 +30,10 @@ puts allTeachers
 
 get '/' do
   refreshAllTeachers(db, allTeachers)
-  puts allTeachers
-  toReturn="<table>"
+  toReturn="<h2>emails προσωπικής ενημέρωσης εφημεριών</h3>"
+  toReturn+="<h4>το σύστημα προσωπικής ενημέρωσης είναι<font color=red> υπο δοκιμαστική</font> περίοδο.</h4>"
+  toReturn+="<h4>Nα ελέγχετε πάντα τις εφημερίες σας με το επίσημο αρχείο<br> που μας στέλνει ο/η υπεύθυνος/η των εφημεριών.</h4>"
+  toReturn+="<table>"
   allTeachers.each do |t, e|
     toReturn += "<tr>"
     toReturn += "<td>#{t}</td><td>#{e}</td><td><a href='/#{t}'>Καταχώριση/ενημέρωση email.</a></td>"
