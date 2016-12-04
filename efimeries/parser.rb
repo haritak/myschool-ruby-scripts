@@ -158,6 +158,7 @@ while current_row_no <= rowOfLastDayLastPlace
   current_column_no = columnOfFirstIntermission
   while current_column_no<=columnOfLastIntermission
     cell = sheet.cell(current_row_no, current_column_no)
+    cell.strip!
     teachers<<cell unless teachers.include?(cell)
     current_column_no+=1
   end
