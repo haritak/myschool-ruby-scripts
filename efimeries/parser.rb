@@ -266,7 +266,7 @@ def sendEmail(teacher, email, efimeries)
     Mail.deliver do
       charset = "UTF-8"
       content_transfer_encoding="8bit"
-      from 'Αρτέμης <artemis1epalmoiron@gmail.com>'
+      from 'Άρτεμις <artemis1epalmoiron@gmail.com>'
       if not TESTING
         to email
       else
@@ -299,8 +299,7 @@ def sendEmail(teacher, email, efimeries)
 να κολλήσω και να μην σας στείλω τίποτα ή να σας στείλω
 άλλα 'ντ' αλλων.
 
-Με τιμή,
-Αρτέμης 
+Άρτεμις 
 
         EOF
       end#text_part
