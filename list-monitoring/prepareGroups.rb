@@ -50,7 +50,7 @@ def informSchedulersOfMissing(email, missingFiles, msg)
   Mail.deliver do
     charset = "UTF-8"
     content_transfer_encoding="8bit"
-    from 'Αρτέμης Μάτσας <artemis1epalmoiron@gmail.com>'
+    from 'Αρτέμης <artemis1epalmoiron@gmail.com>'
     if not TESTING
       to 'tkodellas@gmail.com'
       cc $programmers.join(",")
@@ -78,7 +78,7 @@ def informSchedulersOfMissing(email, missingFiles, msg)
 συμπεριλαμβάνοντας ότι λείπει για να μπορώ να δουλέψω και εγώ.
 
 Με τιμή,
-Αρτέμης Μάτσας
+Αρτέμης 
 υγ: Το email περιλαμβάνει στους παραλήπτες όλους όσους
 ασχολούνται με το ωρολόγιο πρόγραμμα.
       EOF
@@ -90,7 +90,7 @@ def informProgramOk
   Mail.deliver do
     charset = "UTF-8"
     content_transfer_encoding="8bit"
-    from 'Αρτέμης Μάτσας <artemis1epalmoiron@gmail.com>'
+    from 'Αρτέμης <artemis1epalmoiron@gmail.com>'
     if not TESTING
       to 'tkodellas@gmail.com'
       cc $programmers.join(",")
@@ -111,7 +111,7 @@ def informProgramOk
 http://srv-1tee-moiron.ira.sch.gr/epalmoiron/wordpress/?page_id=966
 
 Με τιμή,
-Αρτέμης Μάτσας
+Αρτέμης 
 υγ: Το email περιλαμβάνει στους παραλήπτες όλους όσους
 ασχολούνται με το ωρολόγιο πρόγραμμα.
       EOF
@@ -124,7 +124,7 @@ def emailFile(filename, filename2)
   Mail.deliver do
     charset = "UTF-8"
     content_transfer_encoding="8bit"
-    from 'Αρτέμης Μάτσας <artemis1epalmoiron@gmail.com>'
+    from 'Αρτέμης <artemis1epalmoiron@gmail.com>'
     if TESTING
       to 'charitakis.ioannis@gmail.com'
     else 
@@ -149,7 +149,7 @@ http://srv-1tee-moiron.ira.sch.gr:4567/ αλλά
 έτσι ώστε να ξαναπιάσω δουλειά.
 
 Με τιμή,
-Αρτέμης Μάτσας
+Αρτέμης 
       EOF
     end
   end
