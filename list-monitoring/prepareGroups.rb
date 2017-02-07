@@ -16,7 +16,9 @@ $programmers = ["charitakis.ioannis@gmail.com",
                "tkodellas@gmail.com",
                "glemon1@gmail.com",
                "manosski@yahoo.com",
-               "epalmoiron.yp@gmail.com"]
+               "epalmoiron.yp@gmail.com",
+               "nikito@sch.gr"]
+
 
 Mail.defaults do
   retriever_method :imap, 
@@ -228,7 +230,7 @@ Mail.all.each do |m|
           filename2='' unless File.exists?(filename2)
           emailFile('GroupFixer/READY.xls', filename2)
         else
-          puts "TODO - κάτι στράβωσε στην δημιουργία τους READY.xls"
+          puts "TODO - κάτι στράβωσε στην δημιουργία του READY.xls"
         end
       end #matches xls
       if filename =~ /efimeries\.ods/
