@@ -154,7 +154,10 @@ http://srv-1tee-moiron.ira.sch.gr:4567/ αλλά
   end
 end
 
-puts "Starting email processing..."
+puts "Starting email processing on"
+now = DateTime.now
+puts "#{now.cweek} #{now.day} #{now.hour}:#{now.minute}"
+
 Mail.all.each do |m|
 
   sender = m.from
