@@ -10,6 +10,7 @@ const DAYS_PER_WEEK = 5;
 const START_HOUR_GAP = 1;//gap when day hours start
 //$psnger = new Teacher(); // create passenger object to store passenger data
 $dromo_array = array();
+
 //----ych
 $handle = new SQLite3("whosin.db");
 
@@ -58,6 +59,17 @@ if (strlen($_FILES["file"]["name"])>4){
 				$name = $cell;
         //-->ych
         $name = str_replace("/","_",$name);
+        /* if this is a new name, insert it! */
+        $sql = "SELECT * from teachers WHERE timetables_name='" . $name . "'";
+        $ret = $handle->query($sql);
+        if ($ret->fetchArray(SQLITE3_ASSOC) == FALSE) {
+          /* this is a new name, go on and insert it to whosin.db */
+          $sql = "INSERT INTO teachers VALUES('".$name."',0)";
+          $op = $handle->prepare($sql);
+          $op->execute();
+        }
+
+
         if (!in_array($name, $teachers_included)) {
           continue;
         }

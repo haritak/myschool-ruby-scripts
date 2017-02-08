@@ -60,6 +60,17 @@ if (strlen($_FILES["file"]["name"])>4){
 				$name = $cell;
         //-->ych
         $name = str_replace("/","_",$name);
+        /* if this is a new name, insert it! */
+        $sql = "SELECT * from teachers WHERE timetables_name='" . $name . "'";
+        $ret = $handle->query($sql);
+        if ($ret->fetchArray(SQLITE3_ASSOC) == FALSE) {
+          /* this is a new name, go on and insert it to whosin.db */
+          $sql = "INSERT INTO teachers VALUES('".$name."',0)";
+          $op = $handle->prepare($sql);
+          $op->execute();
+        }
+
+
         if (!in_array($name, $teachers_included)) {
           continue;
         }
