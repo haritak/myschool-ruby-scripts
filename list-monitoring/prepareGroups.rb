@@ -129,6 +129,7 @@ def emailFile(filename, filename2)
       to 'charitakis.ioannis@gmail.com'
     else 
       to '1epal-moiron-dev@googlegroups.com'
+      cc 'nikito@sch.gr'
     end
     time = Time.new
     subject "Ετοιμο αρχείο READY.xls για αυτά που πήρα στις #{time.day}-#{time.month}"
