@@ -7,7 +7,7 @@ require 'capybara'
 require 'capybara/dsl'
 require 'launchy'
 require 'selenium-webdriver'
-load    '/home/haritak/automate/credentials.txt'
+load    '../credentials.txt'
 
 class MySchoolMissingLessons
   include Capybara::DSL
